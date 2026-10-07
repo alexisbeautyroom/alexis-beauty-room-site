@@ -599,7 +599,7 @@
     }
     status.textContent = "Loading…";
     try {
-      const res = await fetch(`/.netlify/functions/cal-bookings?from=${from}&to=${to}`, { headers: apiHeaders() });
+      const res = await fetch(`/.netlify/functions/get-appointments?from=${from}&to=${to}`, { headers: apiHeaders() });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to load schedule');
       scheduleBookings = (data.bookings || []).sort((a,b) => a.start.localeCompare(b.start));
@@ -627,6 +627,11 @@
       let statusHtml;
       if (isCancelled){
         statusHtml = `<span class="method-tag" style="background:var(--red-bg); color:var(--red);">Cancelled</span>`;
+      } else if (b.status === 'pending'){
+        // Someone's mid-checkout right now — not cancelled, not confirmed
+        // yet. Nothing to do here but wait a few minutes; it'll either
+        // become confirmed or expire on its own.
+        statusHtml = `<span class="method-tag" style="background:var(--ivory); color:var(--gold-deep);">Pending payment</span>`;
       } else if (!isPast){
         statusHtml = `<span class="method-tag method-card" style="opacity:0.7;">Upcoming</span>`;
       } else if (b.noShow){
@@ -637,7 +642,7 @@
           statusHtml = `<span class="method-tag ${methodClass(match.method)}">Logged — $${match.amount.toFixed(2)} (${methodLabel(match.method)})</span>`;
         } else {
           statusHtml = `
-            <button class="btn" style="border-color:var(--red); color:var(--red); padding:6px 12px; font-size:11px;" onclick="markNoShow('${b.uid}','${b.attendeeEmail}')">No-show</button>
+            <button class="btn" style="border-color:var(--red); color:var(--red); padding:6px 12px; font-size:11px;" onclick="markNoShow('${b.uid}')">No-show</button>
             <button class="btn" style="padding:6px 12px; font-size:11px;" onclick="chargeRemainderFor('${b.uid}')">Charge Card</button>
             <button class="btn btn-solid" style="padding:6px 12px; font-size:11px;" onclick="prefillPaymentFrom('${b.uid}')">Log Payment</button>
           `;
@@ -656,16 +661,16 @@
     }).join('');
   }
 
-  async function markNoShow(bookingUid, attendeeEmail){
-    if (!confirm("Mark this attendee as a no-show in Cal.com?")) return;
+  async function markNoShow(appointmentId){
+    if (!confirm("Mark this appointment as a no-show?")) return;
     try {
-      const res = await fetch('/.netlify/functions/mark-absent', {
+      const res = await fetch('/.netlify/functions/mark-no-show', {
         method: 'POST',
         headers: apiHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ bookingUid, attendeeEmail, absent: true })
+        body: JSON.stringify({ appointmentId })
       });
       if (!res.ok) throw new Error((await res.json()).error || 'Failed to mark no-show');
-      const booking = scheduleBookings.find(b => b.uid === bookingUid);
+      const booking = scheduleBookings.find(b => b.uid === appointmentId);
       if (booking) booking.noShow = true;
       renderScheduleList();
     } catch (err){
