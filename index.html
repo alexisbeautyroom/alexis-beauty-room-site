@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alexis Beauty Room — Nail Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EE;
+    --ivory:#F1E7D6;
+    --ink:#2B241C;
+    --ink-soft:#5B5044;
+    --gold:#AD8752;
+    --gold-deep:#8A6A3C;
+    --blush:#E7C9BC;
+    --line:#E2D3B8;
+    --white:#FFFDF9;
+    --radius-arch: 240px 240px 0 0;
+    --max: 1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    margin:0;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  p{margin:0; line-height:1.6; color:var(--ink-soft);}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 32px;}
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+    font-weight:600;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:14px 28px;
+    border-radius:2px;
+    font-size:13px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    font-weight:500;
+    cursor:pointer;
+    border:1px solid var(--gold);
+    transition:all .25s ease;
+    white-space:nowrap;
+  }
+  .btn[hidden]{ display:none; }
+  .btn-solid{ background:var(--ink); color:var(--white); border-color:var(--ink); }
+  .btn-solid:hover{ background:var(--gold-deep); border-color:var(--gold-deep); }
+  .btn-line{ background:transparent; color:var(--ink); }
+  .btn-line:hover{ background:var(--ink); color:var(--white); border-color:var(--ink); }
+
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(251,246,238,0.9);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s ease, box-shadow .3s ease;
+  }
+  header.scrolled{ border-color:var(--line); box-shadow:0 4px 24px rgba(43,36,28,0.05); }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:82px;
+  }
+  .logo{
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    letter-spacing:0.02em;
+    display:flex; flex-direction:column; line-height:1.05;
+  }
+  .logo b{font-weight:500;}
+  .logo span{
+    font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold-deep); margin-top:3px; font-family:'Work Sans',sans-serif;
+  }
+  .nav-links{ display:flex; gap:36px; align-items:center; }
+  .nav-links a{
+    font-size:13px; letter-spacing:0.04em; color:var(--ink-soft);
+    position:relative; padding:4px 0;
+  }
+  .nav-links a:hover{color:var(--ink);}
+  .nav-links a::after{
+    content:""; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--gold);
+    transition:width .25s ease;
+  }
+  .nav-links a:hover::after{ width:100%; }
+  .burger{display:none; background:none; border:none; cursor:pointer;}
+
+  /* HERO */
+  .hero{
+    display:grid; grid-template-columns:1.05fr 0.95fr; align-items:center;
+    gap:60px; padding:70px 0 90px;
+  }
+  .hero-copy .eyebrow{margin-bottom:18px; display:block;}
+  .hero-copy h1{
+    font-size:clamp(40px, 5.2vw, 68px);
+    line-height:1.02;
+  }
+  .hero-copy h1 em{
+    font-style:italic; color:var(--gold-deep); font-weight:400;
+  }
+  .hero-copy p.lede{
+    margin-top:22px; max-width:440px; font-size:16.5px;
+  }
+  .hero-actions{ display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; }
+  .hero-meta{
+    margin-top:38px; display:flex; flex-wrap:wrap; gap:20px 24px; font-size:13px; color:var(--ink-soft);
+    border-top:1px solid var(--line); padding-top:20px; max-width:520px;
+  }
+  .hero-meta div b{ display:block; color:var(--ink); font-family:'Fraunces',serif; font-size:15px; font-weight:500; margin-bottom:2px;}
+
+  .hero-art{
+    position:relative;
+    height:560px;
+    border-radius: var(--radius-arch);
+    background:
+      radial-gradient(120% 90% at 30% 15%, #C9A56A 0%, #B4884F 35%, #8A6A3C 65%, #5C4527 100%);
+    overflow:hidden;
+    box-shadow: 0 30px 60px -20px rgba(120,90,40,0.35);
+  }
+  .hero-art::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      conic-gradient(from 200deg at 70% 30%, rgba(255,255,255,0.18), rgba(255,255,255,0) 30%),
+      conic-gradient(from 20deg at 20% 80%, rgba(255,255,255,0.12), rgba(255,255,255,0) 25%);
+    mix-blend-mode:screen;
+  }
+  .hero-art > svg{ position:absolute; inset:0; width:100%; height:100%; }
+
+  section{ padding:96px 0; }
+  .section-head{ max-width:620px; margin-bottom:52px; }
+  .section-head .eyebrow{margin-bottom:14px; display:block;}
+  .section-head h2{ font-size:clamp(30px,3.6vw,42px); }
+  .section-head p{ margin-top:16px; font-size:16px; }
+  .alt-bg{ background:var(--ivory); }
+
+  /* AVAILABILITY TICKER — signature element */
+  .avail{
+    background:var(--ink); color:var(--white); padding:44px 0;
+  }
+  .avail .wrap{ display:flex; flex-direction:column; gap:22px; }
+  .avail-top{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .avail-top h3{ color:var(--white); font-size:22px; font-weight:400; font-style:italic; }
+  .avail-top span{ font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--blush); }
+  .avail-row{
+    display:flex; gap:14px; overflow-x:auto; padding-bottom:8px;
+    scroll-snap-type:x proximity;
+  }
+  .avail-row::-webkit-scrollbar{ height:5px; }
+  .avail-row::-webkit-scrollbar-thumb{ background:var(--gold); border-radius:4px; }
+  .day-card{
+    scroll-snap-align:start;
+    min-width:220px;
+    max-width:240px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.14);
+    padding:18px 16px;
+    flex-shrink:0;
+  }
+  .day-card .dow{ font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--blush); }
+  .day-card .date{ font-family:'Fraunces',serif; font-size:26px; margin:4px 0 12px; }
+  .slot{
+    display:inline-block; font-size:12px; padding:6px 10px; margin:0 6px 6px 0;
+    border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.85);
+  }
+  .slot.taken{ opacity:0.28; text-decoration:line-through; border-style:dashed; }
+  .day-card.full{ opacity:0.45; }
+  .avail-note{ font-size:12.5px; color:rgba(255,255,255,0.6); }
+
+  /* BOOKING WIZARD */
+  .booking-wizard{
+    background:var(--white); border:1px solid var(--line);
+    padding:40px; max-width:760px;
+  }
+  .wiz-steps{ display:flex; gap:0; margin-bottom:36px; border-bottom:1px solid var(--line); padding-bottom:20px; }
+  .wiz-step{
+    flex:1; text-align:center; font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--ink-soft); display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .wiz-num{
+    width:28px; height:28px; border-radius:50%; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic;
+    font-size:14px; color:var(--ink-soft); background:var(--cream);
+  }
+  .wiz-step.active .wiz-num{ background:var(--ink); border-color:var(--ink); color:var(--white); }
+  .wiz-step.active{ color:var(--ink); font-weight:600; }
+  .wiz-step.done .wiz-num{ background:var(--gold); border-color:var(--gold); color:var(--white); }
+
+  .cat-toggle{ display:flex; gap:10px; margin-bottom:24px; }
+  .cat-btn{
+    padding:10px 22px; border:1px solid var(--line); background:var(--cream);
+    font-family:'Work Sans',sans-serif; font-size:13px; letter-spacing:0.05em; text-transform:uppercase;
+    cursor:pointer; color:var(--ink-soft);
+  }
+  .cat-btn.active{ background:var(--ink); color:var(--white); border-color:var(--ink); }
+
+  .svc-option-list{ display:grid; gap:10px; }
+  .svc-option{
+    display:flex; justify-content:space-between; align-items:center;
+    border:1px solid var(--line); padding:16px 18px; cursor:pointer; transition:border-color .2s ease, background .2s ease;
+  }
+  .svc-option:hover{ border-color:var(--gold); }
+  .svc-option.selected{ border-color:var(--gold); background:var(--ivory); }
+  .svc-option .svc-name{ font-family:'Fraunces',serif; font-size:16px; }
+  .svc-option .svc-meta{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+  .svc-option .svc-price{ font-family:'Fraunces',serif; font-style:italic; color:var(--gold-deep); font-size:16px; white-space:nowrap; }
+
+  .wiz-hint{ font-size:13px; color:var(--ink-soft); }
+  .date-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+  .date-cell{
+    border:1px solid var(--line); padding:14px 6px; text-align:center; cursor:pointer;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .date-cell:hover{ border-color:var(--gold); }
+  .date-cell.selected{ background:var(--ink); border-color:var(--ink); color:var(--white); }
+  .date-cell .dc-dow{ font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); }
+  .date-cell.selected .dc-dow{ color:rgba(255,255,255,0.65); }
+  .date-cell .dc-num{ font-family:'Fraunces',serif; font-size:20px; margin-top:4px; }
+
+  .date-cell.other{ display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--gold-deep); }
+  .date-cell.other .dc-num{ font-size:15px; }
+
+  .cal-modal-backdrop{
+    position:fixed; inset:0; background:rgba(43,36,28,0.55); z-index:100;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .cal-modal-backdrop[hidden]{ display:none; }
+  .cal-modal{
+    background:var(--white); border:1px solid var(--line); padding:28px; width:100%; max-width:360px;
+  }
+  .cal-modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .cal-modal-head span{ font-family:'Fraunces',serif; font-size:17px; }
+  .cal-nav{ background:none; border:1px solid var(--line); width:30px; height:30px; cursor:pointer; color:var(--ink); font-size:14px; }
+  .cal-nav:hover{ border-color:var(--gold); }
+  .cal-dow-row{ display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:11px; color:var(--ink-soft); margin-bottom:6px; }
+  .cal-modal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .cal-day{
+    aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+    font-size:13px; cursor:pointer; border:1px solid transparent; color:var(--ink);
+  }
+  .cal-day.disabled{ color:var(--line); cursor:default; pointer-events:none; }
+  .cal-day.empty{ visibility:hidden; }
+  .cal-day:not(.disabled):hover{ border-color:var(--gold); }
+  .cal-day.selected{ background:var(--ink); color:var(--white); }
+
+  .time-grid{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  .time-cell{
+    border:1px solid var(--line); padding:10px 16px; font-size:13px; cursor:pointer;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .time-cell:hover{ border-color:var(--gold); }
+  .time-cell.selected{ background:var(--gold); border-color:var(--gold); color:var(--white); }
+
+  .wiz-form{ display:grid; gap:16px; max-width:420px; }
+  .wiz-form label{ font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); display:flex; flex-direction:column; gap:6px; }
+  .wiz-form input{
+    padding:12px 14px; border:1px solid var(--line); background:var(--cream);
+    font-family:'Work Sans',sans-serif; font-size:14px; color:var(--ink); text-transform:none; letter-spacing:0;
+  }
+  .wiz-form input:focus{ outline:2px solid var(--gold); outline-offset:1px; }
+  .wiz-checks{ margin-top:26px; display:grid; gap:14px; max-width:520px; }
+  .check-row{ display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:var(--ink-soft); cursor:pointer; }
+  .check-row input{ margin-top:3px; flex-shrink:0; }
+
+  .confirm-summary{ border:1px solid var(--line); padding:24px; background:var(--ivory); }
+  .confirm-summary .cs-row{ display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  .confirm-summary .cs-row:last-child{ border-bottom:none; }
+  .confirm-summary .cs-row b{ color:var(--gold-deep); }
+
+  .wiz-nav{ display:flex; justify-content:space-between; margin-top:32px; }
+  @media (max-width:600px){
+    .booking-wizard{ padding:26px 20px; }
+    .wiz-steps{ gap:0; }
+    .wiz-step span:not(.wiz-num){ display:none; }
+    .date-grid{ grid-template-columns:repeat(3,1fr); }
+  }
+
+  /* CLIENT ACCESS PANEL */
+  .access-panel{
+    background:var(--ivory); border:1px solid var(--line);
+    padding:44px 40px; display:grid; grid-template-columns:1.3fr 1fr; gap:32px; align-items:center;
+  }
+  .access-copy h3{ font-size:24px; margin-top:12px; }
+  .access-copy p{ margin-top:12px; font-size:14.5px; max-width:440px; }
+  .access-form{ display:flex; gap:10px; }
+  .access-form input{
+    flex:1; padding:14px 16px; border:1px solid var(--line); background:var(--white);
+    font-family:'Work Sans',sans-serif; font-size:14px; color:var(--ink);
+  }
+  .access-form input:focus{ outline:2px solid var(--gold); outline-offset:1px; }
+  .access-result{ grid-column:1 / -1; font-size:13.5px; margin-top:4px; min-height:20px; }
+  .access-result.ok{ color:#4B6E4F; }
+  .access-result.err{ color:#A6493A; }
+  @media (max-width:700px){
+    .access-panel{ grid-template-columns:1fr; }
+  }
+
+  /* SERVICES */
+  .svc-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:26px;
+  }
+  .svc-card{
+    background:var(--white);
+    border:1px solid var(--line);
+    padding:34px 28px;
+    position:relative;
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .svc-card:hover{ transform:translateY(-4px); box-shadow:0 20px 40px -24px rgba(43,36,28,0.25); }
+  .svc-icon{ width:38px; height:52px; margin-bottom:20px; color:var(--gold-deep); }
+  .svc-card h4{ font-size:19px; margin-bottom:6px; }
+  .svc-card .price{ font-family:'Fraunces',serif; font-style:italic; color:var(--gold-deep); font-size:16px; }
+  .svc-card p{ font-size:13.5px; margin-top:10px; }
+  .svc-list{ list-style:none; margin:16px 0 0; padding:0; border-top:1px solid var(--line); }
+  .svc-list li{
+    display:flex; justify-content:space-between; padding:10px 0;
+    border-bottom:1px solid var(--line); font-size:13.5px; color:var(--ink-soft);
+  }
+  .svc-list li b{ color:var(--ink); font-weight:500; }
+
+  /* PROCESS */
+  .process{ display:grid; grid-template-columns:repeat(3,1fr); gap:40px; }
+  .proc-step{ position:relative; padding-top:26px; border-top:1px solid var(--gold); }
+  .proc-step .num{ font-family:'Fraunces',serif; font-style:italic; font-size:14px; color:var(--gold-deep); }
+  .proc-step h4{ font-size:20px; margin:14px 0 10px; }
+  .proc-step p{ font-size:14.5px; }
+
+  /* CANCELLATION */
+  .policy{
+    display:grid; grid-template-columns:0.8fr 1.2fr; gap:0;
+    border:1px solid var(--line);
+    background:var(--white);
+  }
+  .policy-side{
+    background:var(--ink); color:var(--white); padding:48px 40px;
+    display:flex; flex-direction:column; justify-content:center;
+  }
+  .policy-side .eyebrow{ color:var(--blush); }
+  .policy-side h3{ color:var(--white); font-size:28px; margin-top:14px; }
+  .policy-side p{ color:rgba(255,255,255,0.65); margin-top:14px; font-size:14.5px; }
+  .policy-list{ list-style:none; margin:0; padding:40px; display:grid; gap:0; }
+  .policy-list li{
+    display:flex; gap:16px; padding:18px 0; border-bottom:1px solid var(--line);
+    font-size:14.5px;
+  }
+  .policy-list li:last-child{ border-bottom:none; }
+  .policy-list li .mark{ color:var(--gold-deep); font-family:'Fraunces',serif; font-style:italic; flex-shrink:0; }
+
+  /* REVIEWS */
+  .rev-row{ display:flex; gap:24px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:12px; }
+  .rev-row::-webkit-scrollbar{ height:5px; }
+  .rev-row::-webkit-scrollbar-thumb{ background:var(--gold); border-radius:4px; }
+  .rev-card{
+    scroll-snap-align:start; min-width:340px; max-width:340px;
+    background:var(--white); border:1px solid var(--line); padding:32px;
+    flex-shrink:0;
+  }
+  .rev-quote{ font-family:'Fraunces',serif; font-size:34px; color:var(--gold); line-height:1; }
+  .stars{ color:var(--gold-deep); letter-spacing:2px; font-size:14px; margin:10px 0 14px; }
+  .rev-card p.body{ font-size:14.5px; color:var(--ink-soft); font-style:italic; }
+  .rev-name{ margin-top:18px; font-size:13px; letter-spacing:0.05em; color:var(--ink); font-weight:500; }
+
+  /* FAQ */
+  .faq-item{ border-bottom:1px solid var(--line); }
+  .faq-q{
+    width:100%; text-align:left; background:none; border:none; cursor:pointer;
+    padding:24px 0; display:flex; justify-content:space-between; align-items:center;
+    font-family:'Fraunces',serif; font-size:18px; color:var(--ink);
+  }
+  .faq-q .plus{ font-family:'Work Sans',sans-serif; font-size:20px; color:var(--gold-deep); transition:transform .25s ease; }
+  .faq-item.open .faq-q .plus{ transform:rotate(45deg); }
+  .faq-a{ max-height:0; overflow:hidden; transition:max-height .35s ease; }
+  .faq-a p{ padding-bottom:24px; font-size:14.5px; max-width:640px; }
+  .faq-item.open .faq-a{ max-height:200px; }
+
+  /* CONTACT */
+  .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start; }
+  .info-block{ margin-bottom:30px; }
+  .info-block .eyebrow{ margin-bottom:8px; display:block; }
+  .info-block h4{ font-size:19px; margin-bottom:6px; }
+  .hours-table{ width:100%; border-collapse:collapse; margin-top:8px; }
+  .hours-table td{ padding:8px 0; font-size:14.5px; border-bottom:1px solid var(--line); color:var(--ink-soft); }
+  .hours-table td:last-child{ text-align:right; color:var(--ink); font-weight:500; }
+  .map-frame{
+    height:100%; min-height:380px;
+    background:var(--ivory); border:1px solid var(--line);
+    position:relative; display:flex; align-items:center; justify-content:center;
+  }
+  .map-frame svg{ width:70%; opacity:0.7; }
+  .map-pin{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-100%);
+    color:var(--gold-deep);
+  }
+
+  footer{
+    background:var(--ink); color:rgba(255,255,255,0.6); padding:48px 0; font-size:13px;
+  }
+  footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+  footer .logo{ color:var(--white); }
+  .social{ display:flex; gap:18px; }
+  .social a{ color:rgba(255,255,255,0.7); }
+  .social a:hover{ color:var(--gold); }
+
+  @media (max-width:920px){
+    .hero{ grid-template-columns:1fr; padding-top:36px; }
+    .hero-art{ height:380px; order:-1; }
+    .nav-links{ display:none; }
+    .burger{ display:block; }
+    .svc-grid{ grid-template-columns:1fr 1fr; }
+    .process{ grid-template-columns:1fr; }
+    .policy{ grid-template-columns:1fr; }
+    .contact-grid{ grid-template-columns:1fr; }
+  }
+  @media (max-width:600px){
+    .svc-grid{ grid-template-columns:1fr; }
+    .svc-detail-grid{ grid-template-columns:1fr !important; }
+    section{ padding:64px 0; }
+    .wrap{ padding:0 20px; }
+  }
+</style>
+<script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<header id="site-header">
+  <nav class="wrap">
+    <div class="logo"><b>Alexis Beauty Room</b><span>Nail Studio</span></div>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#booking">Booking</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="#booking" class="btn btn-solid">Book Now</a>
+  </nav>
+</header>
+
+<section style="padding:0;">
+  <div class="wrap hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Rockwall, Texas · By Appointment</span>
+      <h1>Nails, done<br>with <em>intention.</em></h1>
+      <p class="lede">A quiet, considered nail studio inside Salon Boutique — acrylic, gel‑X, and structured sets, booked ahead and built to last.</p>
+      <div class="hero-actions">
+        <a href="#booking" class="btn btn-solid">Book Now</a>
+        <a href="#services" class="btn btn-line">View Services</a>
+      </div>
+      <div class="hero-meta">
+        <div><b>Thu</b>12pm – 4:30pm</div>
+        <div><b>Fri – Sat</b>8am – 4:30pm</div>
+        <div><b>Sun</b>8am – 12pm</div>
+        <div><b>Deposit</b>50% required per service</div>
+      </div>
+    </div>
+    <div class="hero-art">
+      <svg viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- nested arch frames -->
+        <path d="M20 400 V150 C20 70 78 20 150 20 C222 20 280 70 280 150 V400" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+        <path d="M50 400 V165 C50 95 95 48 150 48 C205 48 250 95 250 165 V400" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <path d="M80 400 V180 C80 122 112 78 150 78 C188 78 220 122 220 180 V400" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"/>
+        <!-- a single elongated almond nail, hand-drawn -->
+        <path d="M150 130 C185 130 202 178 202 230 C202 292 180 335 150 335 C120 335 98 292 98 230 C98 178 115 130 150 130 Z"
+              stroke="rgba(255,255,255,0.85)" stroke-width="1.6" fill="rgba(255,255,255,0.06)"/>
+        <path d="M150 152 C172 152 184 186 184 224" stroke="rgba(255,255,255,0.45)" stroke-width="1"/>
+        <!-- cuticle line -->
+        <path d="M120 230 Q150 246 180 230" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="booking">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Book Your Appointment</span>
+      <h2>Reserve your spot.</h2>
+      <p>Pick a service, choose a time, and confirm your details — we'll follow up directly to collect your deposit and secure your spot.</p>
+    </div>
+
+    <div class="booking-wizard" id="booking-wizard">
+      <div class="wiz-steps" id="wiz-steps">
+        <div class="wiz-step active" data-step="1"><span class="wiz-num">1</span>Service</div>
+        <div class="wiz-step" data-step="2"><span class="wiz-num">2</span>Date & Time</div>
+        <div class="wiz-step" data-step="3"><span class="wiz-num">3</span>Your Info</div>
+        <div class="wiz-step" data-step="4"><span class="wiz-num">4</span>Confirm</div>
+      </div>
+
+      <!-- STEP 1: SERVICE -->
+      <div class="wiz-panel" data-panel="1">
+        <div class="cat-toggle">
+          <button class="cat-btn active" data-cat="mani" type="button">Mani</button>
+          <button class="cat-btn" data-cat="pedi" type="button">Pedi</button>
+        </div>
+        <div class="svc-option-list" id="svc-option-list"></div>
+      </div>
+
+      <!-- STEP 2: DATE & TIME -->
+      <div class="wiz-panel" data-panel="2" hidden>
+        <p class="wiz-hint">Available Thursday–Sunday only. First slot is the studio's opening time; 4:30pm is the last appointment.</p>
+        <div class="date-grid" id="date-grid"></div>
+        <div id="time-section" hidden>
+          <p class="wiz-hint" style="margin-top:22px;">Times for <b id="chosen-date-label"></b></p>
+          <div class="time-grid" id="time-grid"></div>
+        </div>
+      </div>
+
+      <!-- CALENDAR MODAL for "Other" date -->
+      <div class="cal-modal-backdrop" id="cal-modal-backdrop" hidden>
+        <div class="cal-modal">
+          <div class="cal-modal-head">
+            <button type="button" class="cal-nav" id="cal-prev">&#8592;</button>
+            <span id="cal-month-label"></span>
+            <button type="button" class="cal-nav" id="cal-next">&#8594;</button>
+          </div>
+          <div class="cal-dow-row">
+            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+          </div>
+          <div class="cal-modal-grid" id="cal-modal-grid"></div>
+          <p class="wiz-hint" style="margin-top:14px;">Only Thursday–Sunday are bookable days.</p>
+          <button type="button" class="btn btn-line" id="cal-modal-close" style="margin-top:14px; width:100%;">Cancel</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: YOUR INFO -->
+      <div class="wiz-panel" data-panel="3" hidden>
+        <div class="wiz-form">
+          <label>Full name<input type="text" id="c-name" placeholder="Jane Doe"></label>
+          <label>Phone number<input type="tel" id="c-phone" placeholder="(214) 555-0123"></label>
+          <label>Email<input type="email" id="c-email" placeholder="jane@email.com"></label>
+        </div>
+        <div class="wiz-checks">
+          <label class="check-row"><input type="checkbox" id="c-health"><span>I confirm no fungus, discoloration, or injuries, and that my nails/toes are healthy.</span></label>
+          <label class="check-row"><input type="checkbox" id="c-policy"><span>I agree to the deposit, card-on-file, and cancellation policies below.</span></label>
+        </div>
+      </div>
+
+      <!-- STEP 4: CONFIRM -->
+      <div class="wiz-panel" data-panel="4" hidden>
+        <div class="confirm-summary" id="confirm-summary"></div>
+        <p class="wiz-hint" id="confirm-note" style="margin-top:18px;"></p>
+        <div id="payment-step" hidden style="margin-top:22px;">
+          <div id="payment-element" style="margin-bottom:16px;"></div>
+          <div id="payment-error" style="color:#A6493A; font-size:13px; margin-bottom:12px;"></div>
+          <button type="button" class="btn btn-solid" id="pay-deposit-btn" onclick="handlePayDeposit()">Pay Deposit</button>
+        </div>
+      </div>
+
+      <div class="wiz-nav">
+        <button class="btn btn-line" id="wiz-back" type="button" hidden>Back</button>
+        <button class="btn btn-solid" id="wiz-next" type="button">Continue</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="client-access">
+  <div class="wrap">
+    <div class="access-panel">
+      <div class="access-copy">
+        <span class="eyebrow">Client Access</span>
+        <h3>Monthly schedule, released mid‑month.</h3>
+        <p>Each month's calendar unlocks partway through the prior month, by clientele group. Enter your access code to check whether this month is open yet.</p>
+      </div>
+      <div class="access-form">
+        <input type="text" id="access-code" placeholder="Access code" autocomplete="off">
+        <button class="btn btn-solid" id="access-submit" type="button">Unlock</button>
+      </div>
+      <p id="access-result" class="access-result"></p>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Services & Pricing</span>
+      <h2>Every finish, considered.</h2>
+      <p>Base pricing only — length, shape, and design add‑ons are extra and confirmed at booking.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card">
+        <svg class="svc-icon" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 6h16l4 14-4 30H12L8 20 12 6Z" stroke="currentColor" stroke-width="1.4"/>
+        </svg>
+        <h4>Acrylic Full Sets</h4>
+        <div class="price">from $65</div>
+        <p>One‑color acrylic, short to XXL length.</p>
+      </div>
+      <div class="svc-card">
+        <svg class="svc-icon" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 5c8 0 15 8 15 20 0 16-7 24-15 24S5 41 5 25c0-12 7-20 15-20Z" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M11 20h18" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        <h4>Gel‑X Full Sets</h4>
+        <div class="price">from $75</div>
+        <p>One‑color gel‑X extensions, short to XXL length.</p>
+      </div>
+      <div class="svc-card">
+        <svg class="svc-icon" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="6" width="28" height="42" rx="10" stroke="currentColor" stroke-width="1.4"/>
+        </svg>
+        <h4>Gel Manicure</h4>
+        <div class="price">$60</div>
+        <p>Nail trimming, shaping, cuticle removal, and gel polish.</p>
+      </div>
+      <div class="svc-card">
+        <svg class="svc-icon" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="20" cy="27" rx="15" ry="23" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M20 10v34" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <h4>Pedicures</h4>
+        <div class="price">from $80</div>
+        <p>Gel, structured, or acrylic-toe pedicures, dry technique.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:70px;">
+      <span class="eyebrow">Mani</span>
+      <h3 style="font-size:26px; margin:10px 0 26px;">Hands</h3>
+      <div class="svc-detail-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:40px 48px;">
+        <div>
+          <h4 style="font-size:17px; margin-bottom:12px; color:var(--gold-deep); font-family:'Work Sans',sans-serif; font-weight:600; letter-spacing:0.02em;">Acrylic</h4>
+          <ul class="svc-list">
+            <li><b>Short</b><span>$65.00 · 2h 30m</span></li>
+            <li><b>Medium</b><span>$70.00 · 3h</span></li>
+            <li><b>Long</b><span>$80.00 · 3h</span></li>
+            <li><b>XL</b><span>$90.00 · 3h</span></li>
+            <li><b>XXL</b><span>$95.00 · 3h</span></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-size:17px; margin-bottom:12px; color:var(--gold-deep); font-family:'Work Sans',sans-serif; font-weight:600; letter-spacing:0.02em;">Gel‑X</h4>
+          <ul class="svc-list">
+            <li><b>Short</b><span>$75.00 · 2h</span></li>
+            <li><b>Medium</b><span>$80.00 · 2h</span></li>
+            <li><b>Long</b><span>$85.00 · 2h</span></li>
+            <li><b>XL</b><span>$95.00 · 2h</span></li>
+            <li><b>XXL</b><span>$105.00 · 2h</span></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-size:17px; margin-bottom:12px; color:var(--gold-deep); font-family:'Work Sans',sans-serif; font-weight:600; letter-spacing:0.02em;">Structured Manis</h4>
+          <ul class="svc-list">
+            <li><b>Structured Manicure</b><span>$85.00 · 2h</span></li>
+            <li><b>Structured Extension</b><span>$10.00/nail · 5m</span></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-size:17px; margin-bottom:12px; color:var(--gold-deep); font-family:'Work Sans',sans-serif; font-weight:600; letter-spacing:0.02em;">Gel Manis</h4>
+          <ul class="svc-list">
+            <li><b>Gel Manicure</b><span>$60.00 · 2h</span></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-size:17px; margin-bottom:12px; color:var(--gold-deep); font-family:'Work Sans',sans-serif; font-weight:600; letter-spacing:0.02em;">Soak Offs</h4>
+          <ul class="svc-list">
+            <li><b>Soak Off</b><span>$20.00 · 30m</span></li>
+            <li><b>Foreign Soak Off</b><span>$35.00+ · 30m</span></li>
+          </ul>
+          <p style="font-size:12.5px; margin-top:10px;">Foreign soak‑offs increase depending on severity. Nails only, not toes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:70px;">
+      <span class="eyebrow">Pedi</span>
+      <h3 style="font-size:26px; margin:10px 0 26px;">Toes</h3>
+      <ul class="svc-list" style="max-width:640px;">
+        <li><b>Gel Pedicure</b><span>$80.00 · 1h</span></li>
+        <li><b>Structured Pedicure</b><span>$120.00 · 1h 15m</span></li>
+        <li><b>Acrylic Toes</b><span>$100.00 · 2h</span></li>
+        <li><b>Acrylic Big Toes Only</b><span>$40.00 · 20m</span></li>
+      </ul>
+      <p style="font-size:12.5px; margin-top:10px;">All pedicures use dry (Russian) technique. Acrylic Big Toes Only is an add‑on to a Gel or Structured Pedicure.</p>
+    </div>
+
+    <div style="margin-top:70px;">
+      <span class="eyebrow">On Its Own</span>
+      <h3 style="font-size:26px; margin:10px 0 26px;">Nail Art</h3>
+      <ul class="svc-list" style="max-width:640px;">
+        <li><b>French Tips</b><span>$30.00 · 30m</span></li>
+        <li><b>Ombré</b><span>$20.00 · 10m</span></li>
+        <li><b>Marble</b><span>$20.00 · 10m</span></li>
+        <li><b>Chrome</b><span>$20.00 · 10m</span></li>
+      </ul>
+      <p style="font-size:12.5px; margin-top:10px;">Priced for all nails — pricing adjusts if only some nails are done. Applies to mani or pedi.</p>
+    </div>
+  </div>
+</section>
+
+<section class="alt-bg">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">How Scheduling Works</span>
+      <h2>Three steps to your appointment.</h2>
+    </div>
+    <div class="process">
+      <div class="proc-step">
+        <div class="num">01</div>
+        <h4>Request your time</h4>
+        <p>Pick your service and time right here on the site — your spot is reserved as soon as you confirm.</p>
+      </div>
+      <div class="proc-step">
+        <div class="num">02</div>
+        <h4>We follow up</h4>
+        <p>We'll reach out by text or email to confirm your set, collect your deposit, and get a card on file.</p>
+      </div>
+      <div class="proc-step">
+        <div class="num">03</div>
+        <h4>Show up on time</h4>
+        <p>Arrive on time — your deposit is applied to the total, with the remaining balance due at your appointment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Cancellation Policy</span>
+      <h2>Fair to you, fair to the next guest.</h2>
+    </div>
+    <div class="policy">
+      <div class="policy-side">
+        <span class="eyebrow">Please Read Before Booking</span>
+        <h3>Respecting the schedule, for everyone.</h3>
+        <p>By booking, you're agreeing to these policies. Please communicate as needed — we're understanding, just keep us in the loop.</p>
+      </div>
+      <ul class="policy-list">
+        <li><span class="mark">—</span><span>A <b>50% deposit</b> is due at booking, charged per service — mani and pedi are deposited separately.</span></li>
+        <li><span class="mark">—</span><span>A <b>card on file is required</b> to secure your appointment, covering a <b>50% cancellation or no‑show fee</b> if needed.</span></li>
+        <li><span class="mark">—</span><span>To reschedule, give at least <b>36 hours' notice</b>. Canceling inside 36 hours is treated as a late cancellation.</span></li>
+        <li><span class="mark">—</span><span>Running <b>8–10 minutes late</b> adds a <b>$10 late fee</b>. More than 10 minutes late, and the appointment is canceled — the cancellation fee applies.</span></li>
+        <li><span class="mark">—</span><span>At booking, you'll confirm: no fungus, discoloration, or injuries; that nails and toes are healthy; and that you agree to all studio policies.</span></li>
+        <li><span class="mark">—</span><span><b>No‑shows</b> and unpaid fees result in being <b>blocked from future bookings.</b></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="alt-bg" id="reviews">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Reviews</span>
+      <h2>What guests say.</h2>
+    </div>
+    <div class="rev-row">
+      <div class="rev-card">
+        <div class="rev-quote">“</div>
+        <div class="stars">★★★★★</div>
+        <p class="body">The most careful cuticle work I've had — and my gel still looked fresh three weeks in.</p>
+        <div class="rev-name">— M. T., Regular guest</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-quote">“</div>
+        <div class="stars">★★★★★</div>
+        <p class="body">Booked a fill same‑week with no wait. The studio itself is calm and spotless.</p>
+        <div class="rev-name">— R. K.</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-quote">“</div>
+        <div class="stars">★★★★★</div>
+        <p class="body">Brought a reference photo for nail art and the shape matched exactly. Will be back monthly.</p>
+        <div class="rev-name">— J. A.</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-quote">“</div>
+        <div class="stars">★★★★☆</div>
+        <p class="body">Lovely deluxe pedicure — the massage chair alone is worth the visit.</p>
+        <div class="rev-name">— S. P.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">FAQ</span>
+      <h2>Good to know before you book.</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-q">Do I need a deposit to book?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Yes — a 50% deposit is due at booking, charged per service. Booking a mani and a pedi together means a deposit for each.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Why do you need a card on file?<span class="plus">+</span></button>
+        <div class="faq-a"><p>A card on file secures your appointment and covers the 50% cancellation or no‑show fee if you cancel late or don't show.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What health info do you ask for at booking?<span class="plus">+</span></button>
+        <div class="faq-a"><p>You'll confirm there's no fungus, discoloration, or injury present, and that your nails and toes are healthy — this keeps every guest safe.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How do I confirm my exact set or design?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Message on Instagram after booking to confirm the set, so materials are ready and your remaining balance is clear before your appointment.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What happens if I'm running late?<span class="plus">+</span></button>
+        <div class="faq-a"><p>8–10 minutes late adds a $10 late fee. More than 10 minutes, and the appointment is canceled with a $30 cancellation fee.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do you remove sets from another salon?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Yes — soak‑off is $20. If it turns out to be more difficult than expected, the foreign soak‑off rate ($35+) applies based on severity. Nails only, not toes.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt-bg" id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Visit</span>
+      <h2>Find us, reach us.</h2>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <div class="info-block">
+          <span class="eyebrow">Address</span>
+          <h4>Salon Boutique — 1307 Ridge Rd., Room 136</h4>
+          <p>Rockwall, TX 75087</p>
+        </div>
+        <div class="info-block">
+          <span class="eyebrow">Contact</span>
+          <h4>(214) 557‑4706</h4>
+          <p>alexisbeautyroom0@gmail.com</p>
+        </div>
+        <div class="info-block">
+          <span class="eyebrow">Hours — Effective Aug 31</span>
+          <table class="hours-table">
+            <tr><td>Monday – Wednesday</td><td>Closed</td></tr>
+            <tr><td>Thursday</td><td>12pm – 4:30pm</td></tr>
+            <tr><td>Friday</td><td>8am – 4:30pm</td></tr>
+            <tr><td>Saturday</td><td>8am – 4:30pm</td></tr>
+            <tr><td>Sunday</td><td>8am – 12pm</td></tr>
+          </table>
+          <p style="font-size:12.5px; margin-top:10px;">Listed time is the first available appointment; 4:30pm is the last scheduled client. No after‑hours appointments.</p>
+        </div>
+      </div>
+      <div class="map-frame" style="padding:0; overflow:hidden;">
+        <iframe
+          src="https://www.google.com/maps?q=1307+Ridge+Rd+Room+136+Rockwall+TX+75087&output=embed"
+          width="100%" height="380" style="border:0; filter:grayscale(0.15) contrast(1.05);"
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          title="Alexis Beauty Room location map">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">Alexis Beauty Room</div>
+    <div class="social">
+      <a href="https://www.instagram.com/alexisbeautyroom" target="_blank" rel="noopener" aria-label="Instagram">Instagram</a>
+      <a href="https://www.tiktok.com/@alexisbeautyroom" target="_blank" rel="noopener" aria-label="TikTok">TikTok</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div>© 2026 Alexis Beauty Room. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  // header shadow on scroll
+  const header = document.getElementById('site-header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  // ===== BOOKING WIZARD =====
+  // NOTE: only services actually created in Cal.com are listed here.
+  // "Acrylic Big Toes Only" and the 4 nail-art add-ons aren't built yet — add them
+  // once they exist as Links in Cal.com, using the same slug pattern.
+  const CAL_USERNAME = "alexisbeautyroom"; // her Cal.com username
+
+  // IMPORTANT: replace with her real Stripe PUBLISHABLE key (starts with pk_...)
+  // This is safe to expose client-side — it is NOT the secret key.
+  const STRIPE_PUBLISHABLE_KEY = "pk_REPLACE_ME";
+  const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+  let stripeElements = null;
+  let pendingBookingInfo = null; // holds name/email/phone/amount between booking + payment steps
+
+  const SERVICES = {
+    mani: [
+      { name: "Gel Manicure", slug: "gel-manicure", price: 60, duration: 120 },
+      { name: "Structured Manicure", slug: "structured-manicure", price: 85, duration: 120 },
+      { name: "Short Acrylic Full Set", slug: "short-acrylic-full-set", price: 65, duration: 150 },
+      { name: "Medium Acrylic Full Set", slug: "medium-acrylic-full-set", price: 70, duration: 180 },
+      { name: "Long Acrylic Full Set", slug: "long-acrylic-full-set", price: 80, duration: 180 },
+      { name: "XL Acrylic Full Set", slug: "xl-acrylic-full-set", price: 90, duration: 180 },
+      { name: "XXL Acrylic Full Set", slug: "xxl-acrylic-full-set", price: 95, duration: 180 },
+      { name: "Short Gel‑X Full Set", slug: "short-gel-x-full-set", price: 75, duration: 120 },
+      { name: "Medium Gel‑X Full Set", slug: "medium-gel-x-full-set", price: 80, duration: 120 },
+      { name: "Long Gel‑X Full Set", slug: "long-gel-x-full-set", price: 85, duration: 120 },
+      { name: "XL Gel‑X Full Set", slug: "xl-gel-x-full-set", price: 95, duration: 120 },
+      { name: "XXL Gel‑X Full Set", slug: "xxl-gel-x-full-set", price: 105, duration: 120 },
+      { name: "Soak Off", slug: "soak-off", price: 20, duration: 30 },
+      { name: "Foreign Soak Off", slug: "foreign-soak-off", price: 35, duration: 30 }
+    ],
+    pedi: [
+      { name: "Gel Pedicure", slug: "gel-pedicure", price: 80, duration: 60 },
+      { name: "Structured Pedicure", slug: "structured-pedicure", price: 120, duration: 75 },
+      { name: "Acrylic Toes", slug: "acrylic-toes", price: 100, duration: 120 }
+    ]
+  };
+
+  // Studio hours by weekday (0=Sun...6=Sat). Only Thu(4), Fri(5), Sat(6), Sun(0) are open.
+  // NOTE: this is only used to decide which weekday buttons to *show* in the quick-pick
+  // date grid. The real source of truth for what's actually bookable is Cal.com itself,
+  // fetched live in renderTimeGrid() below.
+  const STUDIO_HOURS = {
+    4: { start: "12:00", label: "Thu" },
+    5: { start: "8:00",  label: "Fri" },
+    6: { start: "8:00",  label: "Sat" },
+    0: { start: "8:00",  label: "Sun" }
+  };
+
+  let wizState = { category: "mani", service: null, date: null, time: null, timeISO: null };
+  let currentWizStep = 1;
+
+  function renderServiceList(){
+    const list = document.getElementById('svc-option-list');
+    list.innerHTML = "";
+    SERVICES[wizState.category].forEach((svc, i) => {
+      const div = document.createElement('div');
+      div.className = "svc-option" + (wizState.service && wizState.service.name === svc.name ? " selected" : "");
+      div.innerHTML = `<div><div class="svc-name">${svc.name}</div><div class="svc-meta">${svc.duration >= 60 ? (svc.duration/60)+"h"+(svc.duration%60?" "+(svc.duration%60)+"m":"") : svc.duration+"m"}</div></div><div class="svc-price">$${svc.price}</div>`;
+      div.addEventListener('click', () => {
+        wizState.service = svc;
+        renderServiceList();
+      });
+      list.appendChild(div);
+    });
+  }
+
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      wizState.category = btn.dataset.cat;
+      wizState.service = null;
+      renderServiceList();
+    });
+  });
+
+  function renderDateGrid(){
+    const grid = document.getElementById('date-grid');
+    grid.innerHTML = "";
+    const today = new Date();
+    let quickDates = [], i = 0;
+    while (quickDates.length < 8 && i < 40){
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      i++;
+      if (STUDIO_HOURS[d.getDay()]) quickDates.push(d);
+    }
+    const isOtherSelected = wizState.date && !quickDates.some(d => d.toDateString() === wizState.date.toDateString());
+
+    quickDates.forEach(d => {
+      const cell = document.createElement('div');
+      cell.className = "date-cell" + (wizState.date && wizState.date.toDateString() === d.toDateString() ? " selected" : "");
+      cell.innerHTML = `<div class="dc-dow">${d.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="dc-num">${d.getDate()}</div>`;
+      cell.addEventListener('click', () => {
+        wizState.date = d;
+        wizState.time = null;
+          wizState.timeISO = null;
+        renderDateGrid();
+        renderTimeGrid();
+      });
+      grid.appendChild(cell);
+    });
+
+    // "Other" cell — opens full calendar modal
+    const otherCell = document.createElement('div');
+    otherCell.className = "date-cell other" + (isOtherSelected ? " selected" : "");
+    otherCell.innerHTML = isOtherSelected
+      ? `<div class="dc-dow">Chosen</div><div class="dc-num">${wizState.date.toLocaleDateString('en-US',{month:'short', day:'numeric'})}</div>`
+      : `<div class="dc-num">&#128197;</div><div class="dc-dow">Other</div>`;
+    otherCell.addEventListener('click', openCalModal);
+    grid.appendChild(otherCell);
+  }
+
+  // ===== "Other date" calendar modal =====
+  let calViewDate = new Date();
+
+  function openCalModal(){
+    calViewDate = wizState.date ? new Date(wizState.date) : new Date();
+    calViewDate.setDate(1);
+    renderCalModal();
+    document.getElementById('cal-modal-backdrop').hidden = false;
+  }
+  function closeCalModal(){
+    document.getElementById('cal-modal-backdrop').hidden = true;
+  }
+  function renderCalModal(){
+    const label = document.getElementById('cal-month-label');
+    const grid = document.getElementById('cal-modal-grid');
+    label.textContent = calViewDate.toLocaleDateString('en-US',{month:'long', year:'numeric'});
+    grid.innerHTML = "";
+    const year = calViewDate.getFullYear(), month = calViewDate.getMonth();
+    const firstDow = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    for (let i = 0; i < firstDow; i++){
+      const empty = document.createElement('div');
+      empty.className = "cal-day empty";
+      grid.appendChild(empty);
+    }
+    for (let day = 1; day <= daysInMonth; day++){
+      const d = new Date(year, month, day);
+      const cell = document.createElement('div');
+      const isOpenDay = !!STUDIO_HOURS[d.getDay()];
+      const isPast = d < today;
+      const isSelected = wizState.date && wizState.date.toDateString() === d.toDateString();
+      cell.className = "cal-day" + (!isOpenDay || isPast ? " disabled" : "") + (isSelected ? " selected" : "");
+      cell.textContent = day;
+      if (isOpenDay && !isPast){
+        cell.addEventListener('click', () => {
+          wizState.date = d;
+          wizState.time = null;
+          wizState.timeISO = null;
+          closeCalModal();
+          renderDateGrid();
+          renderTimeGrid();
+        });
+      }
+      grid.appendChild(cell);
+    }
+  }
+  document.getElementById('cal-prev').addEventListener('click', () => {
+    calViewDate.setMonth(calViewDate.getMonth() - 1);
+    renderCalModal();
+  });
+  document.getElementById('cal-next').addEventListener('click', () => {
+    calViewDate.setMonth(calViewDate.getMonth() + 1);
+    renderCalModal();
+  });
+  document.getElementById('cal-modal-close').addEventListener('click', closeCalModal);
+  document.getElementById('cal-modal-backdrop').addEventListener('click', (e) => {
+    if (e.target.id === 'cal-modal-backdrop') closeCalModal();
+  });
+
+  function formatDateYMD(d){
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+
+  async function renderTimeGrid(){
+    const section = document.getElementById('time-section');
+    const grid = document.getElementById('time-grid');
+    if (!wizState.date){ section.hidden = true; return; }
+    section.hidden = false;
+    document.getElementById('chosen-date-label').textContent = wizState.date.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'});
+    grid.innerHTML = `<p class="wiz-hint">Loading available times…</p>`;
+
+    const svc = wizState.service;
+    const dateStr = formatDateYMD(wizState.date);
+
+    const url = `/.netlify/functions/get-availability?date=${dateStr}&durationMinutes=${svc.duration}`;
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Couldn't load times.");
+
+      const daySlots = data.slots || [];
+
+      grid.innerHTML = "";
+      if (daySlots.length === 0){
+        grid.innerHTML = `<p class="wiz-hint">No open times on this date — try another day.</p>`;
+        return;
+      }
+      daySlots.forEach(iso => {
+        const localLabel = new Date(iso).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+        const cell = document.createElement('div');
+        cell.className = "time-cell" + (wizState.timeISO === iso ? " selected" : "");
+        cell.textContent = localLabel;
+        cell.addEventListener('click', () => {
+          wizState.timeISO = iso;
+          wizState.time = localLabel;
+          renderTimeGrid();
+        });
+        grid.appendChild(cell);
+      });
+    } catch (err){
+      grid.innerHTML = `<p class="wiz-hint">Couldn't load times right now — please try again in a moment.</p>`;
+    }
+  }
+
+  function renderConfirmSummary(){
+    const box = document.getElementById('confirm-summary');
+    const svc = wizState.service;
+    const deposit = (svc.price * 0.5).toFixed(2);
+    const balance = (svc.price - deposit).toFixed(2);
+    box.innerHTML = `
+      <div class="cs-row"><span>Service</span><b>${svc.name}</b></div>
+      <div class="cs-row"><span>Date & time</span><b>${wizState.date.toLocaleDateString('en-US',{weekday:'short', month:'short', day:'numeric'})} · ${wizState.time}</b></div>
+      <div class="cs-row"><span>Total price</span><b>$${svc.price.toFixed(2)}</b></div>
+      <div class="cs-row"><span>Deposit required (50%)</span><b>$${deposit}</b></div>
+      <div class="cs-row"><span>Remaining balance at appointment</span><b>$${balance}</b></div>
+      <div class="cs-row"><span>Booked for</span><b>${document.getElementById('c-name').value || "—"}</b></div>
+    `;
+    document.getElementById('confirm-note').innerHTML =
+      `Confirming reserves this time on the calendar. We'll follow up directly by text or email to collect your deposit and secure your appointment.`;
+  }
+
+  function showWizStep(n){
+    currentWizStep = n;
+    document.querySelectorAll('.wiz-panel').forEach(p => p.hidden = (parseInt(p.dataset.panel) !== n));
+    document.querySelectorAll('.wiz-step').forEach(s => {
+      const step = parseInt(s.dataset.step);
+      s.classList.toggle('active', step === n);
+      s.classList.toggle('done', step < n);
+    });
+    document.getElementById('wiz-back').hidden = (n === 1);
+    const nextBtn = document.getElementById('wiz-next');
+    nextBtn.textContent = (n === 4) ? "Confirm Appointment" : "Continue";
+    if (n === 4) renderConfirmSummary();
+  }
+
+  document.getElementById('wiz-back').addEventListener('click', () => {
+    if (currentWizStep > 1) showWizStep(currentWizStep - 1);
+  });
+
+  document.getElementById('wiz-next').addEventListener('click', async () => {
+    if (currentWizStep === 1){
+      if (!wizState.service){ alert("Please select a service to continue."); return; }
+      showWizStep(2);
+    } else if (currentWizStep === 2){
+      if (!wizState.date || !wizState.timeISO){ alert("Please choose a date and time to continue."); return; }
+      showWizStep(3);
+    } else if (currentWizStep === 3){
+      const name = document.getElementById('c-name').value.trim();
+      const phone = document.getElementById('c-phone').value.trim();
+      const email = document.getElementById('c-email').value.trim();
+      const health = document.getElementById('c-health').checked;
+      const policy = document.getElementById('c-policy').checked;
+      if (!name || !phone || !email){ alert("Please fill in your name, phone, and email."); return; }
+      if (!health || !policy){ alert("Please confirm both checkboxes to continue."); return; }
+      showWizStep(4);
+    } else if (currentWizStep === 4){
+      const btn = document.getElementById('wiz-next');
+      const backBtn = document.getElementById('wiz-back');
+      const fullName = document.getElementById('c-name').value.trim();
+      const nameParts = fullName.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      const phone = document.getElementById('c-phone').value.trim();
+      const email = document.getElementById('c-email').value.trim();
+
+      btn.disabled = true;
+      btn.textContent = "Booking…";
+
+      let res, data;
+      try {
+        res = await fetch('/.netlify/functions/create-appointment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            startTime: wizState.timeISO,
+            durationMinutes: wizState.service.duration,
+            serviceSlug: wizState.service.slug,
+            serviceName: wizState.service.name,
+            totalPrice: wizState.service.price,
+            depositAmount: Math.round(wizState.service.price * 0.5 * 100) / 100,
+            firstName, lastName, email, phone
+          })
+        });
+        data = await res.json();
+      } catch (networkErr){
+        // A genuinely ambiguous failure (connection dropped, etc.) — we
+        // don't know if it went through or not.
+        document.getElementById('confirm-note').innerHTML =
+          `<strong>We couldn't confirm whether this went through.</strong> This can happen on a slow connection even when the appointment was actually created. Please check your email for a confirmation before trying again — booking twice by mistake can result in two separate charges.`;
+        btn.disabled = false;
+        btn.textContent = "Check Email, Then Retry";
+        return;
+      }
+
+      if (res.ok){
+        document.getElementById('confirm-summary').innerHTML =
+          `<div class="cs-row"><span>Appointment booked! One last step — secure it with your deposit below.</span></div>`;
+        document.getElementById('confirm-note').textContent = "";
+        backBtn.hidden = true;
+
+        const deposit = Math.round(wizState.service.price * 0.5 * 100) / 100;
+        pendingBookingInfo = { name: fullName, email, phone, amount: deposit };
+
+        try {
+          const depositRes = await fetch('/.netlify/functions/create-deposit-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: deposit, email, name: fullName })
+          });
+          const depositData = await depositRes.json();
+          if (!depositRes.ok) throw new Error(depositData.error || "Couldn't start the deposit payment.");
+
+          stripeElements = stripe.elements({ clientSecret: depositData.clientSecret });
+          const paymentElement = stripeElements.create('payment');
+          paymentElement.mount('#payment-element');
+
+          document.getElementById('payment-step').hidden = false;
+          btn.hidden = true;
+        } catch (depositErr){
+          document.getElementById('confirm-note').innerHTML =
+            `Your appointment is booked, but we couldn't start the deposit payment (${depositErr.message}). We'll follow up directly to collect it.`;
+          btn.hidden = true;
+        }
+      } else if (res.status === 409){
+        // A real, definitive rejection — the database confirmed this exact
+        // time is genuinely unavailable. Not ambiguous: send them back to
+        // pick a new time.
+        alert(data.error || "That time was just booked by someone else. Please pick a different time.");
+        btn.disabled = false;
+        btn.textContent = "Confirm Appointment";
+        showWizStep(2);
+      } else {
+        alert("Couldn't complete this booking: " + (data.error || "Unknown error") + "\n\nPlease try again.");
+        btn.disabled = false;
+        btn.textContent = "Confirm Appointment";
+      }
+    }
+  });
+
+  async function handlePayDeposit(){
+    const payBtn = document.getElementById('pay-deposit-btn');
+    const errorBox = document.getElementById('payment-error');
+    errorBox.textContent = "";
+    payBtn.disabled = true;
+    payBtn.textContent = "Processing…";
+
+    const { error } = await stripe.confirmPayment({
+      elements: stripeElements,
+      confirmParams: {
+        return_url: window.location.href
+      },
+      redirect: 'if_required'
+    });
+
+    if (error){
+      errorBox.textContent = error.message || "Payment failed — please check your card details and try again.";
+      payBtn.disabled = false;
+      payBtn.textContent = "Pay Deposit";
+      return;
+    }
+
+    document.getElementById('payment-step').hidden = true;
+    document.getElementById('confirm-summary').innerHTML =
+      `<div class="cs-row"><span>All set! Your appointment and deposit are confirmed — see you then.</span></div>`;
+  }
+
+  renderServiceList();
+  renderDateGrid();
+  showWizStep(1);
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Client access codes — EDIT THESE per clientele group.
+  // Note: this is a front-end-only gate for organizing schedule releases,
+  // not real security. Anyone who views the page source can see the codes,
+  // so don't use it to protect anything sensitive.
+  const ACCESS_CODES = {
+    "VIP2026": { group: "VIP clients", open: true },
+    "REGULAR2026": { group: "Regular clients", open: true }
+    // add more codes as: "CODE": { group: "Group name", open: true/false }
+  };
+
+  const accessInput = document.getElementById('access-code');
+  const accessBtn = document.getElementById('access-submit');
+  const accessResult = document.getElementById('access-result');
+
+  function checkAccessCode(){
+    const code = accessInput.value.trim().toUpperCase();
+    const entry = ACCESS_CODES[code];
+    if (!entry){
+      accessResult.textContent = "Code not recognized — check with Alexis Beauty Room for your access code.";
+      accessResult.className = "access-result err";
+      return;
+    }
+    if (entry.open){
+      accessResult.innerHTML = `This month is open for ${entry.group} — <a href="#booking" style="text-decoration:underline; color:inherit;">book your appointment above</a>.`;
+      accessResult.className = "access-result ok";
+    } else {
+      accessResult.textContent = `Hi ${entry.group} — this month's schedule hasn't released yet. Check back mid‑month.`;
+      accessResult.className = "access-result err";
+    }
+  }
+
+  accessBtn.addEventListener('click', checkAccessCode);
+  accessInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkAccessCode(); });
+</script>
+
+</body>
+</html>
