@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Earnings (Template Preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --cream:#FBF6EE; --ivory:#F1E7D6; --ink:#2B241C; --ink-soft:#5B5044;
+    --gold:#AD8752; --gold-deep:#8A6A3C; --line:#E2D3B8; --white:#FFFDF9;
+    --green:#4B6E4F; --green-bg:#E7EFE7; --red:#A6493A; --red-bg:#F5E6E3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--cream); color:var(--ink);
+    font-family:'Work Sans', sans-serif; padding:40px 24px;
+  }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:500; margin:0; }
+  .wrap{ max-width:1020px; margin:0 auto; }
+
+  #login-gate{
+    max-width:380px; margin:80px auto; background:var(--white);
+    border:1px solid var(--line); padding:40px; text-align:center;
+  }
+  #login-gate h2{ font-size:22px; margin-bottom:8px; }
+  #login-gate p{ font-size:13.5px; color:var(--ink-soft); margin-bottom:24px; }
+  #login-gate input{
+    width:100%; padding:12px 14px; border:1px solid var(--line); background:var(--cream);
+    font-size:14px; margin-bottom:14px; font-family:'Work Sans',sans-serif; box-sizing:border-box;
+  }
+  #login-gate button{
+    width:100%; padding:13px; background:var(--ink); color:var(--white); border:none;
+    font-size:13px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;
+  }
+  #login-error{ color:var(--red); font-size:13px; margin-top:10px; min-height:16px; }
+  #load-status{ font-size:12px; color:var(--ink-soft); }
+  #dashboard{ display:block; }
+  .dash-header{
+    display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;
+  }
+  .dash-header h1{ font-size:28px; }
+  .dash-header span{ font-size:12px; color:var(--ink-soft); letter-spacing:0.08em; text-transform:uppercase; }
+
+  .section-label{
+    font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-deep);
+    margin:28px 0 12px; font-weight:600;
+  }
+  .section-label.first{ margin-top:20px; }
+
+  .summary-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .summary-card{ background:var(--white); border:1px solid var(--line); padding:20px; }
+  .summary-card .label{ font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-deep); }
+  .summary-card .value{ font-family:'Fraunces',serif; font-size:26px; margin-top:6px; }
+  .summary-card .sub{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .summary-card.muted{ background:var(--ivory); }
+
+  .panel{ background:var(--white); border:1px solid var(--line); padding:28px; margin-top:24px; }
+  .panel h3{ font-size:18px; margin-bottom:18px; }
+  .chart-panel-head{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; }
+  .chart-panel-controls{ display:flex; gap:10px; align-items:center; }
+  .chart-panel-controls input{
+    padding:9px 12px; border:1px solid var(--line); background:var(--cream); font-size:13.5px;
+    font-family:'Work Sans',sans-serif;
+  }
+  .chart-wrap{ position:relative; width:100%; }
+
+  .filter-row{ display:flex; gap:14px; align-items:end; flex-wrap:wrap; }
+  .filter-row .field{ display:flex; flex-direction:column; gap:6px; }
+  .filter-row label{ font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); }
+  .filter-row input, .filter-row select{
+    padding:9px 12px; border:1px solid var(--line); background:var(--cream); font-size:13.5px;
+    font-family:'Work Sans',sans-serif;
+  }
+  .method-checkbox-group{
+    display:flex; gap:12px; padding:9px 12px; border:1px solid var(--line);
+    background:var(--cream); height:38px; align-items:center; box-sizing:border-box;
+  }
+  .method-checkbox-group label{
+    display:flex; align-items:center; gap:5px; font-size:13px; letter-spacing:0; text-transform:none;
+    color:var(--ink); cursor:pointer; white-space:nowrap;
+  }
+  .method-checkbox-group input[type="checkbox"]{ width:14px; height:14px; }
+  .btn{
+    padding:9px 18px; border:1px solid var(--gold); color:var(--ink); background:transparent;
+    font-size:12px; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; white-space:nowrap;
+    touch-action:manipulation;
+  }
+  .btn:hover{ background:var(--ink); color:var(--white); border-color:var(--ink); }
+  .btn-solid{ background:var(--ink); color:var(--white); border-color:var(--ink); }
+  .btn-solid:hover{ background:var(--gold-deep); border-color:var(--gold-deep); }
+  button{ touch-action:manipulation; }
+  .btn-danger{ border-color:var(--red); color:var(--red); }
+  .btn-danger:hover{ background:var(--red); color:var(--white); border-color:var(--red); }
+  .btn-ghost{ border-color:var(--line); color:var(--ink-soft); }
+  .preset-row{ display:flex; gap:8px; margin-top:4px; }
+  .preset-btn{
+    padding:6px 14px; border:1px solid var(--line); background:var(--cream); color:var(--ink-soft);
+    font-size:11.5px; letter-spacing:0.04em; text-transform:uppercase; cursor:pointer;
+  }
+  .preset-btn:hover, .preset-btn.active{ border-color:var(--gold); color:var(--ink); background:var(--ivory); }
+
+  .table-toolbar{
+    display:flex; justify-content:space-between; align-items:center; margin-top:22px; min-height:32px;
+  }
+  .table-toolbar .left{ font-size:13px; color:var(--ink-soft); }
+  .table-toolbar .left b{ color:var(--ink); }
+
+  .table-scroll{ max-height:640px; overflow-y:auto; margin-top:10px; }
+  table{ width:100%; border-collapse:collapse; }
+  th{
+    text-align:left; font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--gold-deep); border-bottom:1px solid var(--line); padding:10px 8px; font-weight:600;
+    background:var(--white); position:sticky; top:0; z-index:1;
+  }
+  td{ padding:12px 8px; border-bottom:1px solid var(--line); font-size:13.5px; vertical-align:middle; }
+  tr:last-child td{ border-bottom:none; }
+  .method-tag{
+    display:inline-block; padding:3px 10px; font-size:11px; letter-spacing:0.04em;
+    border-radius:2px; text-transform:uppercase;
+  }
+  .method-cash{ background:var(--green-bg); color:var(--green); }
+  .method-zelle{ background:#E3E9F5; color:#3A5A9C; }
+  .method-card{ background:var(--ivory); color:var(--gold-deep); }
+  .row-amount{ font-family:'Fraunces',serif; color:var(--gold-deep); }
+  .del-btn{
+    background:none; border:none; color:var(--red); cursor:pointer; font-size:12px;
+    text-decoration:underline; padding:0;
+  }
+  .empty-row td{ text-align:center; color:var(--ink-soft); padding:32px 0; font-style:italic; }
+  input[type="checkbox"]{ width:16px; height:16px; cursor:pointer; accent-color:var(--gold-deep); }
+
+  .add-form{ display:flex; flex-direction:column; gap:16px; }
+  .add-form-row{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; align-items:end; }
+  .add-form-row.row-2{ grid-template-columns:1.6fr 1fr 1fr auto; }
+  .add-form label{ font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); display:block; margin-bottom:6px; }
+  .add-form input, .add-form select{
+    width:100%; padding:10px 12px; border:1px solid var(--line); background:var(--cream);
+    font-family:'Work Sans',sans-serif; font-size:13.5px; color:var(--ink);
+  }
+  .svc-checkbox-group{
+    display:flex; flex-wrap:wrap; gap:8px 14px; padding:10px 12px; border:1px solid var(--line);
+    background:var(--cream); max-height:110px; overflow-y:auto;
+  }
+  .svc-checkbox-group label{
+    display:flex; align-items:center; gap:6px; font-size:13px; letter-spacing:0; text-transform:none;
+    color:var(--ink); margin-bottom:0; cursor:pointer; white-space:nowrap;
+  }
+  .svc-checkbox-group input[type="checkbox"]{ width:14px; height:14px; }
+  .custom-svc-row{ width:100%; border-top:1px solid var(--line); padding-top:10px; margin-top:4px; }
+  .custom-svc-row input[type="text"], .custom-svc-row input[type="number"]{
+    padding:6px 8px; border:1px solid var(--line); background:var(--white);
+    font-family:'Work Sans',sans-serif; font-size:13px; cursor:auto;
+  }
+  .custom-svc-row input[type="text"]{ width:170px; }
+  .custom-svc-row input[type="number"]{ width:80px; }
+  .custom-svc-row input:disabled{ background:var(--ivory); color:var(--ink-soft); cursor:not-allowed; }
+
+  /* MOBILE */
+  html, body{ overflow-x:hidden; max-width:100%; }
+  @media (max-width:700px){
+    body{ padding:20px 14px; }
+    .summary-row{ grid-template-columns:repeat(2,1fr); gap:10px; }
+    .summary-card{ padding:14px; }
+    .summary-card .value{ font-size:20px; }
+    .panel{ padding:18px; }
+    .chart-panel-head{ flex-direction:column; align-items:flex-start; gap:10px; }
+    .chart-panel-controls{ flex-wrap:wrap; width:100%; }
+    .preset-row{ flex-wrap:wrap; }
+    .filter-row{ flex-direction:column; align-items:stretch; }
+    .filter-row .field{ width:100%; min-width:0; max-width:100%; }
+    .filter-row input, .filter-row select{ width:100%; min-width:0; max-width:100%; box-sizing:border-box; }
+    .filter-row input[type="date"]{ -webkit-appearance:none; appearance:none; }
+    .filter-row .btn{ width:100%; }
+    .method-checkbox-group{ flex-wrap:wrap; height:auto; }
+    .add-form-row{ grid-template-columns:1fr !important; }
+    .add-form-row > div{ min-width:0; }
+    .add-form input, .add-form select{ min-width:0; box-sizing:border-box; }
+    .table-scroll{ overflow-x:auto; }
+    table{ min-width:640px; }
+    .add-form label{ margin-top:8px; }
+    .svc-checkbox-group{ max-height:140px; }
+    .custom-svc-row input[type="text"]{ width:100%; margin-bottom:6px; }
+    .custom-svc-row{ display:flex; flex-direction:column; align-items:flex-start; }
+    .table-toolbar{ flex-direction:column; align-items:flex-start; gap:10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div id="login-gate">
+    <h2>Admin Access</h2>
+    <p>Enter the admin password to view real earnings data.</p>
+    <input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter') unlock()">
+    <button type="button" onclick="unlock()">Unlock</button>
+    <div id="login-error"></div>
+  </div>
+
+  <div id="dashboard" style="display:none;">
+    <div class="dash-header">
+      <h1>Earnings</h1>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span id="load-status"></span>
+        <button class="btn" onclick="openSchedule()">Schedule</button>
+        <button class="btn" onclick="loadAllData()">&#8635; Refresh</button>
+      </div>
+    </div>
+
+    <div class="section-label first">Year to date (Jan 1 – today)</div>
+    <div class="summary-row" id="ytd-row"></div>
+
+    <div class="panel">
+      <div class="chart-panel-head">
+        <h3 style="margin-bottom:0;">Monthly Revenue — <span id="quick-chart-year-label"></span></h3>
+        <div class="chart-panel-controls">
+          <input type="text" id="quick-chart-year" placeholder="Year" maxlength="4" inputmode="numeric" style="width:80px;" onkeydown="if(event.key==='Enter') this.blur()" onblur="renderQuickChart()">
+          <button class="btn" onclick="openReports()">Show more charts &#8594;</button>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:110px;">
+        <canvas id="quick-monthly-chart"></canvas>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Filter records</h3>
+      <div class="filter-row">
+        <div class="field">
+          <label>From</label>
+          <input type="date" id="filter-from">
+        </div>
+        <div class="field">
+          <label>To</label>
+          <input type="date" id="filter-to">
+        </div>
+        <div class="field">
+          <label>Method</label>
+          <div class="method-checkbox-group" id="filter-method-group">
+            <label><input type="checkbox" value="cash" checked> Cash</label>
+            <label><input type="checkbox" value="zelle" checked> Payment App</label>
+            <label><input type="checkbox" value="card" checked> Card</label>
+          </div>
+        </div>
+        <button class="btn btn-solid" onclick="applyFilters()">Apply</button>
+        <button class="btn btn-ghost" onclick="clearFilters()">Clear</button>
+        <button class="btn" onclick="exportToExcel()">Export to Excel</button>
+      </div>
+      <div class="preset-row">
+        <button class="preset-btn" id="preset-ytd" onclick="applyPreset('ytd')">Year to date</button>
+        <input type="text" id="year-select" class="preset-btn" placeholder="Year (e.g. 2026)" maxlength="4" inputmode="numeric" style="width:130px;" onkeydown="if(event.key==='Enter') handleYearInput(this.value)" onblur="handleYearInput(this.value)">
+      </div>
+    </div>
+
+    <div class="section-label">Filtered totals</div>
+    <div class="summary-row" id="filtered-row"></div>
+
+    <div class="panel">
+      <div class="table-toolbar">
+        <div class="left"><b id="row-count">0</b> records shown</div>
+        <button class="btn btn-danger" id="delete-selected-btn" onclick="deleteSelected()" style="display:none;">Delete selected</button>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px;"><input type="checkbox" id="select-all" onclick="toggleSelectAll(this)"></th>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Service</th>
+              <th>Method</th>
+              <th style="text-align:right;">Amount</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="records-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Log a payment</h3>
+      <div class="add-form">
+        <input type="hidden" id="add-cal-uid" value="">
+        <div id="add-cal-note" style="display:none; font-size:12.5px; color:var(--gold-deep); margin-bottom:-4px;">Logging this from a scheduled appointment.</div>
+        <div class="add-form-row">
+          <div>
+            <label>First name</label>
+            <input type="text" id="add-first-name" placeholder="Jane">
+          </div>
+          <div>
+            <label>Last name</label>
+            <input type="text" id="add-last-name" placeholder="Doe">
+          </div>
+          <div>
+            <label>Date</label>
+            <input type="date" id="add-date">
+          </div>
+        </div>
+        <div>
+          <label>Service(s) — select one or more</label>
+          <div class="svc-checkbox-group" id="svc-checkbox-group">
+            <label><input type="checkbox" value="Gel Manicure" data-price="60" onchange="updateAutoAmount()"> Gel Manicure — $60</label>
+            <label><input type="checkbox" value="Structured Manicure" data-price="85" onchange="updateAutoAmount()"> Structured Manicure — $85</label>
+            <label><input type="checkbox" value="Short Acrylic Full Set" data-price="65" onchange="updateAutoAmount()"> Short Acrylic Full Set — $65</label>
+            <label><input type="checkbox" value="Short Gel-X Full Set" data-price="75" onchange="updateAutoAmount()"> Short Gel-X Full Set — $75</label>
+            <label><input type="checkbox" value="Gel Pedicure" data-price="80" onchange="updateAutoAmount()"> Gel Pedicure — $80</label>
+            <label><input type="checkbox" value="Structured Pedicure" data-price="120" onchange="updateAutoAmount()"> Structured Pedicure — $120</label>
+            <label><input type="checkbox" value="Soak Off" data-price="20" onchange="updateAutoAmount()"> Soak Off — $20</label>
+            <label class="custom-svc-row">
+              <input type="checkbox" id="custom-svc-check" onchange="toggleCustomService()">
+              <span>Other:</span>
+              <input type="text" id="custom-svc-title" placeholder="Custom service title" disabled oninput="updateAutoAmount()">
+              <input type="number" id="custom-svc-price" placeholder="$0.00" step="0.01" disabled oninput="updateAutoAmount()">
+            </label>
+          </div>
+        </div>
+        <div class="add-form-row row-2">
+          <div>
+            <label>Amount</label>
+            <input type="number" id="add-amount" placeholder="60.00" step="0.01">
+          </div>
+          <div>
+            <label>Method</label>
+          <select id="add-method">
+            <option value="cash">Cash</option>
+            <option value="zelle">Payment App (Zelle, Venmo, etc.)</option>
+            <option value="card">Card (Stripe)</option>
+          </select>
+        </div>
+        <button class="btn btn-solid" onclick="addPayment(this)">Add</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="reports-view" style="display:none;">
+    <div class="dash-header">
+      <h1>Reports</h1>
+      <button class="btn" onclick="closeReports()">&#8592; Back to Dashboard</button>
+    </div>
+
+    <div class="panel">
+      <div class="chart-panel-head">
+        <h3 style="margin-bottom:0;">Year-over-Year Comparison</h3>
+        <div class="chart-panel-controls" id="yoy-year-checks"></div>
+      </div>
+      <div class="chart-wrap" style="height:150px;"><canvas id="yoy-chart"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="chart-panel-head">
+        <h3 style="margin-bottom:0;">Payment Method Mix by Month</h3>
+        <div class="chart-panel-controls">
+          <label style="font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft);">Year</label>
+          <input type="text" id="mix-year" placeholder="Year" maxlength="4" inputmode="numeric" style="width:80px;" onblur="renderMixChart()" onkeydown="if(event.key==='Enter') this.blur()">
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:150px;"><canvas id="mix-chart"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="chart-panel-head">
+        <h3 style="margin-bottom:0;">Revenue by Service</h3>
+        <div class="chart-panel-controls">
+          <label style="font-size:11px; color:var(--ink-soft);">From</label>
+          <input type="date" id="svc-from">
+          <label style="font-size:11px; color:var(--ink-soft);">To</label>
+          <input type="date" id="svc-to">
+          <button class="btn btn-solid" onclick="renderServiceChart()">Apply</button>
+        </div>
+      </div>
+      <p class="wiz-hint" style="margin-bottom:12px;">When a payment covers multiple services, its amount is split evenly across them for this chart — an approximation, not exact per-service pricing.</p>
+      <div class="chart-wrap" style="height:180px;"><canvas id="service-chart"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="chart-panel-head">
+        <h3 style="margin-bottom:0;">Appointments &amp; Revenue by Month</h3>
+        <div class="chart-panel-controls">
+          <label style="font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft);">Year</label>
+          <input type="text" id="countrev-year" placeholder="Year" maxlength="4" inputmode="numeric" style="width:80px;" onblur="renderCountRevChart()" onkeydown="if(event.key==='Enter') this.blur()">
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:150px;"><canvas id="countrev-chart"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="chart-panel-head">
+        <h3 style="margin-bottom:0;">Top Clients by Spend</h3>
+        <div class="chart-panel-controls">
+          <label style="font-size:11px; color:var(--ink-soft);">From</label>
+          <input type="date" id="topclients-from">
+          <label style="font-size:11px; color:var(--ink-soft);">To</label>
+          <input type="date" id="topclients-to">
+          <button class="btn btn-solid" onclick="renderTopClientsChart()">Apply</button>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:180px;"><canvas id="topclients-chart"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="chart-panel-head">
+        <h3 style="margin-bottom:0;">Average Transaction Value by Month</h3>
+        <div class="chart-panel-controls">
+          <label style="font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft);">Year</label>
+          <input type="text" id="avgtx-year" placeholder="Year" maxlength="4" inputmode="numeric" style="width:80px;" onblur="renderAvgTxChart()" onkeydown="if(event.key==='Enter') this.blur()">
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:140px;"><canvas id="avgtx-chart"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="chart-panel-head">
+        <h3 style="margin-bottom:0;">Revenue by Day of Week</h3>
+        <div class="chart-panel-controls">
+          <label style="font-size:11px; color:var(--ink-soft);">From</label>
+          <input type="date" id="dow-from">
+          <label style="font-size:11px; color:var(--ink-soft);">To</label>
+          <input type="date" id="dow-to">
+          <button class="btn btn-solid" onclick="renderDowChart()">Apply</button>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:140px;"><canvas id="dow-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div id="schedule-view" style="display:none;">
+    <div class="dash-header">
+      <h1>Schedule</h1>
+      <button class="btn" onclick="closeSchedule()">&#8592; Back to Dashboard</button>
+    </div>
+
+    <div class="panel">
+      <div class="filter-row">
+        <div class="field">
+          <label>From</label>
+          <input type="date" id="sched-from">
+        </div>
+        <div class="field">
+          <label>To</label>
+          <input type="date" id="sched-to">
+        </div>
+        <button class="btn btn-solid" onclick="loadSchedule()">Load</button>
+      </div>
+      <p id="sched-status" style="margin-top:14px; font-size:13px; color:var(--ink-soft);"></p>
+    </div>
+
+    <div class="panel">
+      <div id="schedule-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const DOW_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  let quickChart, yoyChart, mixChart, serviceChart, countRevChart, topClientsChart, avgTxChart, dowChart;
+
+  let records = [];
+  let ADMIN_PW = "";
+  let nextId = 1;
+  let activeFilters = { from:null, to:null, methods:["cash","zelle","card"] };
+  let selectedIds = new Set();
+
+  async function unlock(){
+    const pw = document.getElementById('pw-input').value;
+    if (!pw.trim()){
+      document.getElementById('login-error').textContent = "Enter a password to continue.";
+      return;
+    }
+    document.getElementById('login-error').textContent = "Checking...";
+    try {
+      const res = await fetch('/.netlify/functions/payments', {
+        headers: { 'x-admin-password': pw }
+      });
+      if (res.status === 401){
+        document.getElementById('login-error').textContent = "Incorrect password.";
+        return;
+      }
+      if (!res.ok){
+        const data = await res.json().catch(() => ({}));
+        document.getElementById('login-error').textContent = data.error || "Something went wrong — try again.";
+        return;
+      }
+      ADMIN_PW = pw;
+      document.getElementById('login-gate').style.display = "none";
+      document.getElementById('dashboard').style.display = "block";
+      await loadAllData();
+    } catch (err){
+      document.getElementById('login-error').textContent = "Couldn't reach the server — check your connection.";
+    }
+  }
+
+  function apiHeaders(extra){
+    return Object.assign({ 'x-admin-password': ADMIN_PW }, extra || {});
+  }
+
+  async function loadAllData(){
+    const status = document.getElementById('load-status');
+    status.textContent = "Loading...";
+    try {
+      const paymentsRes = await fetch('/.netlify/functions/payments', { headers: apiHeaders() });
+      const paymentsData = await paymentsRes.json();
+      const manualRecords = paymentsData.records || [];
+
+      const wideFrom = "2020-01-01";
+      const wideTo = toDateStr(new Date());
+      const stripeRes = await fetch(`/.netlify/functions/stripe-transactions?from=${wideFrom}&to=${wideTo}`, { headers: apiHeaders() });
+      const stripeData = await stripeRes.json();
+      const stripeRecords = stripeData.records || [];
+
+      records = manualRecords.concat(stripeRecords);
+
+      let note = "";
+      if (stripeData.note) note = " · " + stripeData.note;
+      status.textContent = `Updated ${new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}${note}`;
+
+      applyPreset('ytd');
+      renderQuickChart();
+    } catch (err){
+      status.textContent = "Couldn't load data — check your connection and try Refresh again.";
+    }
+  }
+
+  // ===== Schedule view =====
+  const SLUG_TO_SERVICE = {
+    "gel-manicure": "Gel Manicure",
+    "structured-manicure": "Structured Manicure",
+    "short-acrylic-full-set": "Short Acrylic Full Set",
+    "medium-acrylic-full-set": "Medium Acrylic Full Set",
+    "long-acrylic-full-set": "Long Acrylic Full Set",
+    "xl-acrylic-full-set": "XL Acrylic Full Set",
+    "xxl-acrylic-full-set": "XXL Acrylic Full Set",
+    "short-gel-x-full-set": "Short Gel-X Full Set",
+    "medium-gel-x-full-set": "Medium Gel-X Full Set",
+    "long-gel-x-full-set": "Long Gel-X Full Set",
+    "xl-gel-x-full-set": "XL Gel-X Full Set",
+    "xxl-gel-x-full-set": "XXL Gel-X Full Set",
+    "gel-pedicure": "Gel Pedicure",
+    "structured-pedicure": "Structured Pedicure",
+    "acrylic-toes": "Acrylic Toes",
+    "soak-off": "Soak Off",
+    "foreign-soak-off": "Foreign Soak Off"
+  };
+
+  const SLUG_TO_PRICE = {
+    "gel-manicure": 60, "structured-manicure": 85,
+    "short-acrylic-full-set": 65, "medium-acrylic-full-set": 70, "long-acrylic-full-set": 80,
+    "xl-acrylic-full-set": 90, "xxl-acrylic-full-set": 95,
+    "short-gel-x-full-set": 75, "medium-gel-x-full-set": 80, "long-gel-x-full-set": 85,
+    "xl-gel-x-full-set": 95, "xxl-gel-x-full-set": 105,
+    "gel-pedicure": 80, "structured-pedicure": 120, "acrylic-toes": 100,
+    "soak-off": 20, "foreign-soak-off": 35
+  };
+
+  let scheduleBookings = [];
+
+  function openSchedule(){
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('schedule-view').style.display = 'block';
+    const today = new Date();
+    const weekAgo = new Date(today); weekAgo.setDate(today.getDate() - 7);
+    const weekAhead = new Date(today); weekAhead.setDate(today.getDate() + 7);
+    document.getElementById('sched-from').value = toDateStr(weekAgo);
+    document.getElementById('sched-to').value = toDateStr(weekAhead);
+    loadSchedule();
+  }
+  function closeSchedule(){
+    document.getElementById('schedule-view').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  }
+
+  function findMatchingPayment(booking){
+    // Exact match: this record was logged from this exact booking
+    let match = records.find(r => r.calBookingUid === booking.uid);
+    if (match) return match;
+    // Fallback heuristic for older/unlinked records: same date + name overlap
+    const bookingDate = booking.start.slice(0, 10);
+    const nameLower = (booking.attendeeName || '').toLowerCase();
+    return records.find(r => {
+      const recordName = `${r.firstName || ''} ${r.lastName || ''}`.toLowerCase().trim();
+      return r.date === bookingDate && recordName && nameLower.includes(recordName.split(' ')[0] || '~~none~~');
+    });
+  }
+
+  async function loadSchedule(){
+    const status = document.getElementById('sched-status');
+    const from = document.getElementById('sched-from').value;
+    const to = document.getElementById('sched-to').value;
+    if (!from || !to){
+      status.textContent = "Pick a date range.";
+      return;
+    }
+    status.textContent = "Loading…";
+    try {
+      const res = await fetch(`/.netlify/functions/get-appointments?from=${from}&to=${to}`, { headers: apiHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to load schedule');
+      scheduleBookings = (data.bookings || []).sort((a,b) => a.start.localeCompare(b.start));
+      status.textContent = `${scheduleBookings.length} appointment${scheduleBookings.length!==1?'s':''} in this range.`;
+      renderScheduleList();
+    } catch (err){
+      status.textContent = "Couldn't load schedule: " + err.message;
+    }
+  }
+
+  function renderScheduleList(){
+    const container = document.getElementById('schedule-list');
+    if (scheduleBookings.length === 0){
+      container.innerHTML = `<p style="color:var(--ink-soft); font-style:italic;">No appointments in this range.</p>`;
+      return;
+    }
+    const now = new Date();
+    container.innerHTML = scheduleBookings.map(b => {
+      const start = new Date(b.start);
+      const isCancelled = b.status === 'cancelled';
+      const isPast = start < now;
+      const serviceName = SLUG_TO_SERVICE[b.eventType] || b.eventType || b.title;
+      const dateLabel = start.toLocaleDateString('en-US',{weekday:'short', month:'short', day:'numeric'}) + ' · ' + start.toLocaleTimeString('en-US',{hour:'numeric', minute:'2-digit'});
+
+      let statusHtml;
+      if (isCancelled){
+        statusHtml = `<span class="method-tag" style="background:var(--red-bg); color:var(--red);">Cancelled</span>`;
+      } else if (b.status === 'pending'){
+        // Someone's mid-checkout right now — not cancelled, not confirmed
+        // yet. Nothing to do here but wait a few minutes; it'll either
+        // become confirmed or expire on its own.
+        statusHtml = `<span class="method-tag" style="background:var(--ivory); color:var(--gold-deep);">Pending payment</span>`;
+      } else if (!isPast){
+        statusHtml = `<span class="method-tag method-card" style="opacity:0.7;">Upcoming</span>`;
+      } else if (b.noShow){
+        statusHtml = `<span class="method-tag" style="background:var(--red-bg); color:var(--red);">No-show</span>`;
+      } else {
+        const match = findMatchingPayment(b);
+        if (match){
+          statusHtml = `<span class="method-tag ${methodClass(match.method)}">Logged — $${match.amount.toFixed(2)} (${methodLabel(match.method)})</span>`;
+        } else {
+          statusHtml = `
+            <button class="btn" style="border-color:var(--red); color:var(--red); padding:6px 12px; font-size:11px;" onclick="markNoShow('${b.uid}')">No-show</button>
+            <button class="btn" style="padding:6px 12px; font-size:11px;" onclick="chargeRemainderFor('${b.uid}')">Charge Card</button>
+            <button class="btn btn-solid" style="padding:6px 12px; font-size:11px;" onclick="prefillPaymentFrom('${b.uid}')">Log Payment</button>
+          `;
+        }
+      }
+
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); gap:14px; flex-wrap:wrap;">
+          <div>
+            <div style="font-family:'Fraunces',serif; font-size:15px;">${b.attendeeName || 'Unknown'}</div>
+            <div style="font-size:12.5px; color:var(--ink-soft);">${dateLabel} · ${serviceName}</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">${statusHtml}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function markNoShow(appointmentId){
+    if (!confirm("Mark this appointment as a no-show?")) return;
+    try {
+      const res = await fetch('/.netlify/functions/mark-no-show', {
+        method: 'POST',
+        headers: apiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ appointmentId })
+      });
+      if (!res.ok) throw new Error((await res.json()).error || 'Failed to mark no-show');
+      const booking = scheduleBookings.find(b => b.uid === appointmentId);
+      if (booking) booking.noShow = true;
+      renderScheduleList();
+    } catch (err){
+      alert("Couldn't mark as no-show: " + err.message);
+    }
+  }
+
+  async function chargeRemainderFor(bookingUid){
+    const booking = scheduleBookings.find(b => b.uid === bookingUid);
+    if (!booking) return;
+
+    const totalPrice = SLUG_TO_PRICE[booking.eventType];
+    const defaultRemainder = totalPrice ? (totalPrice * 0.5).toFixed(2) : "";
+    const amountStr = prompt(`Charge the saved card for how much?`, defaultRemainder);
+    if (!amountStr) return;
+    const amount = parseFloat(amountStr);
+    if (!amount || amount <= 0){
+      alert("Please enter a valid amount.");
+      return;
+    }
+
+    if (!confirm(`Charge ${booking.attendeeEmail}'s saved card $${amount.toFixed(2)}? This happens immediately.`)) return;
+
+    try {
+      const res = await fetch('/.netlify/functions/charge-remainder', {
+        method: 'POST',
+        headers: apiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ email: booking.attendeeEmail, amount })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Charge failed');
+
+      alert(`Charged $${amount.toFixed(2)} to the card ending in ${data.last4 || '????'}.`);
+
+      // Log this as a confirmed payment so it shows as "Logged" going forward.
+      const nameParts = (booking.attendeeName || '').split(' ');
+      await fetch('/.netlify/functions/payments', {
+        method: 'POST',
+        headers: apiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({
+          date: booking.start.slice(0,10),
+          firstName: nameParts[0] || '',
+          lastName: nameParts.slice(1).join(' ') || '',
+          services: [SLUG_TO_SERVICE[booking.eventType] || booking.eventType],
+          amount, method: 'card',
+          calBookingUid: booking.uid
+        })
+      });
+      await loadAllData();
+      renderScheduleList();
+    } catch (err){
+      alert("Couldn't charge this card: " + err.message);
+    }
+  }
+
+  function prefillPaymentFrom(bookingUid){
+    const booking = scheduleBookings.find(b => b.uid === bookingUid);
+    if (!booking) return;
+
+    const nameParts = (booking.attendeeName || '').split(' ');
+    document.getElementById('add-first-name').value = nameParts[0] || '';
+    document.getElementById('add-last-name').value = nameParts.slice(1).join(' ') || '';
+    document.getElementById('add-date').value = booking.start.slice(0, 10);
+    document.getElementById('add-cal-uid').value = booking.uid;
+    document.getElementById('add-cal-note').style.display = 'block';
+
+    const serviceName = SLUG_TO_SERVICE[booking.eventType];
+    document.querySelectorAll('#svc-checkbox-group input[type="checkbox"]:not(#custom-svc-check)').forEach(cb => {
+      cb.checked = (cb.value === serviceName);
+    });
+    updateAutoAmount();
+
+    closeSchedule();
+    document.getElementById('add-first-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function pad(n){ return n.toString().padStart(2,"0"); }
+  function toDateStr(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+  function methodLabel(m){ return { cash:"Cash", zelle:"Payment App", card:"Card" }[m] || m; }
+  function methodClass(m){ return { cash:"method-cash", zelle:"method-zelle", card:"method-card" }[m] || ""; }
+
+  function setDateField(id, iso){
+    document.getElementById(id).value = iso;
+  }
+
+  function computeTotals(list){
+    return {
+      total: list.reduce((s,r)=>s+r.amount,0),
+      cash: list.filter(r=>r.method==="cash").reduce((s,r)=>s+r.amount,0),
+      zelle: list.filter(r=>r.method==="zelle").reduce((s,r)=>s+r.amount,0),
+      card: list.filter(r=>r.method==="card").reduce((s,r)=>s+r.amount,0),
+      count: list.length
+    };
+  }
+
+  function renderSummaryRow(elId, totals, muted){
+    document.getElementById(elId).innerHTML = `
+      <div class="summary-card${muted?' muted':''}"><div class="label">Total</div><div class="value">$${totals.total.toFixed(2)}</div><div class="sub">${totals.count} payment${totals.count!==1?'s':''}</div></div>
+      <div class="summary-card${muted?' muted':''}"><div class="label">Cash</div><div class="value">$${totals.cash.toFixed(2)}</div></div>
+      <div class="summary-card${muted?' muted':''}"><div class="label">Payment App</div><div class="value">$${totals.zelle.toFixed(2)}</div></div>
+      <div class="summary-card${muted?' muted':''}"><div class="label">Card</div><div class="value">$${totals.card.toFixed(2)}</div></div>
+    `;
+  }
+
+  function getFiltered(){
+    return records.filter(r => {
+      if (activeFilters.from && r.date < activeFilters.from) return false;
+      if (activeFilters.to && r.date > activeFilters.to) return false;
+      if (!activeFilters.methods.includes(r.method)) return false;
+      return true;
+    });
+  }
+
+  function render(){
+    const now = new Date();
+    const jan1 = toDateStr(new Date(now.getFullYear(), 0, 1));
+    const todayStr = toDateStr(now);
+    const ytdRecords = records.filter(r => r.date >= jan1 && r.date <= todayStr);
+    renderSummaryRow('ytd-row', computeTotals(ytdRecords), false);
+
+    const filtered = getFiltered().sort((a,b) => b.date.localeCompare(a.date));
+    renderSummaryRow('filtered-row', computeTotals(filtered), true);
+    document.getElementById('row-count').textContent = filtered.length;
+
+    const body = document.getElementById('records-body');
+    if (filtered.length === 0){
+      body.innerHTML = `<tr class="empty-row"><td colspan="7">No payments match these filters.</td></tr>`;
+    } else {
+      body.innerHTML = filtered.map(r => `
+        <tr>
+          <td><input type="checkbox" class="row-check" data-id="${r.id}" ${selectedIds.has(r.id)?'checked':''} onclick="toggleRow(${r.id}, this.checked)"></td>
+          <td>${new Date(r.date + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+          <td>${r.firstName || ""} ${r.lastName || ""}</td>
+          <td>${(r.services || []).join(", ")}</td>
+          <td><span class="method-tag ${methodClass(r.method)}">${methodLabel(r.method)}</span></td>
+          <td style="text-align:right;" class="row-amount">$${r.amount.toFixed(2)}</td>
+          <td style="text-align:right;"><button class="del-btn" onclick="deleteOne(${r.id})">Remove</button></td>
+        </tr>
+      `).join("");
+    }
+    updateDeleteButton();
+  }
+
+  function toggleRow(id, checked){
+    if (checked) selectedIds.add(id); else selectedIds.delete(id);
+    updateDeleteButton();
+  }
+  function toggleSelectAll(checkbox){
+    const visibleIds = getFiltered().map(r => r.id);
+    if (checkbox.checked) visibleIds.forEach(id => selectedIds.add(id));
+    else visibleIds.forEach(id => selectedIds.delete(id));
+    render();
+  }
+  function updateDeleteButton(){
+    const btn = document.getElementById('delete-selected-btn');
+    btn.style.display = selectedIds.size > 0 ? "inline-block" : "none";
+    btn.textContent = selectedIds.size > 0 ? `Delete selected (${selectedIds.size})` : "Delete selected";
+  }
+  async function deleteOne(id){
+    const record = records.find(r => r.id === id);
+    if (record && record.source === 'stripe'){
+      alert("Stripe payments can't be deleted here — manage refunds directly in your Stripe dashboard.");
+      return;
+    }
+    if (!confirm("Remove this payment record? This can't be undone.")) return;
+    try {
+      const res = await fetch('/.netlify/functions/payments', {
+        method: 'DELETE',
+        headers: apiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ ids: [id] })
+      });
+      if (!res.ok) throw new Error((await res.json()).error || 'Delete failed');
+      selectedIds.delete(id);
+      await loadAllData();
+    } catch (err){
+      alert("Couldn't delete this record: " + err.message);
+    }
+  }
+  async function deleteSelected(){
+    if (selectedIds.size === 0) return;
+    const idsArray = Array.from(selectedIds);
+    const stripeBlocked = idsArray.filter(id => {
+      const r = records.find(rec => rec.id === id);
+      return r && r.source === 'stripe';
+    });
+    const deletableIds = idsArray.filter(id => !stripeBlocked.includes(id));
+
+    if (stripeBlocked.length > 0 && deletableIds.length === 0){
+      alert("Stripe payments can't be deleted here — manage refunds directly in your Stripe dashboard.");
+      return;
+    }
+    if (!confirm(`Remove ${deletableIds.length} payment record(s)? This can't be undone.` + (stripeBlocked.length ? ` (${stripeBlocked.length} Stripe record(s) were skipped — manage those in Stripe directly.)` : ""))) return;
+
+    try {
+      const res = await fetch('/.netlify/functions/payments', {
+        method: 'DELETE',
+        headers: apiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ ids: deletableIds })
+      });
+      if (!res.ok) throw new Error((await res.json()).error || 'Delete failed');
+      selectedIds.clear();
+      await loadAllData();
+    } catch (err){
+      alert("Couldn't delete these records: " + err.message);
+    }
+  }
+
+  function toggleCustomService(){
+    const checked = document.getElementById('custom-svc-check').checked;
+    const titleEl = document.getElementById('custom-svc-title');
+    const priceEl = document.getElementById('custom-svc-price');
+    titleEl.disabled = !checked;
+    priceEl.disabled = !checked;
+    if (!checked){
+      titleEl.value = "";
+      priceEl.value = "";
+    }
+    updateAutoAmount();
+  }
+
+  function updateAutoAmount(){
+    const checked = document.querySelectorAll('#svc-checkbox-group input[type="checkbox"]:checked:not(#custom-svc-check)');
+    let total = Array.from(checked).reduce((sum, cb) => sum + parseFloat(cb.dataset.price || 0), 0);
+    if (document.getElementById('custom-svc-check').checked){
+      total += parseFloat(document.getElementById('custom-svc-price').value) || 0;
+    }
+    document.getElementById('add-amount').value = total > 0 ? total.toFixed(2) : "";
+  }
+
+  async function addPayment(addBtn){
+    const firstName = document.getElementById('add-first-name').value.trim();
+    const lastName = document.getElementById('add-last-name').value.trim();
+    const date = document.getElementById('add-date').value;
+    const amount = parseFloat(document.getElementById('add-amount').value);
+    const method = document.getElementById('add-method').value;
+    const services = Array.from(document.querySelectorAll('#svc-checkbox-group input[type="checkbox"]:checked:not(#custom-svc-check)')).map(cb => cb.value);
+
+    const customChecked = document.getElementById('custom-svc-check').checked;
+    if (customChecked){
+      const customTitle = document.getElementById('custom-svc-title').value.trim();
+      if (!customTitle){
+        alert("Please enter a title for the custom service, or uncheck it.");
+        return;
+      }
+      services.push(customTitle);
+    }
+
+    if (!date || !amount || amount <= 0){
+      alert("Please enter a date and a valid amount.");
+      return;
+    }
+    if (services.length === 0){
+      alert("Please select at least one service.");
+      return;
+    }
+
+    addBtn.disabled = true;
+    addBtn.textContent = "Saving…";
+
+    const calBookingUid = document.getElementById('add-cal-uid').value || null;
+
+    try {
+      const res = await fetch('/.netlify/functions/payments', {
+        method: 'POST',
+        headers: apiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ date, firstName, lastName, services, amount, method, calBookingUid })
+      });
+      if (!res.ok) throw new Error((await res.json()).error || 'Save failed');
+
+      document.getElementById('add-amount').value = "";
+      document.getElementById('add-first-name').value = "";
+      document.getElementById('add-last-name').value = "";
+      document.getElementById('add-cal-uid').value = "";
+      document.getElementById('add-cal-note').style.display = "none";
+      document.querySelectorAll('#svc-checkbox-group input[type="checkbox"]:checked:not(#custom-svc-check)').forEach(cb => cb.checked = false);
+      document.getElementById('custom-svc-check').checked = false;
+      toggleCustomService();
+      await loadAllData();
+    } catch (err){
+      alert("Couldn't save this payment: " + err.message);
+    } finally {
+      addBtn.disabled = false;
+      addBtn.textContent = "Add";
+    }
+  }
+
+  function getCheckedMethods(){
+    return Array.from(document.querySelectorAll('#filter-method-group input:checked')).map(cb => cb.value);
+  }
+
+  function applyFilters(){
+    activeFilters.from = document.getElementById('filter-from').value || null;
+    activeFilters.to = document.getElementById('filter-to').value || null;
+    activeFilters.methods = getCheckedMethods();
+    document.getElementById('preset-ytd').classList.remove('active');
+    document.getElementById('year-select').value = "";
+    render();
+  }
+
+  function checkAllMethods(){
+    document.querySelectorAll('#filter-method-group input').forEach(cb => cb.checked = true);
+  }
+
+  function clearFilters(){
+    setDateField('filter-from','');
+    setDateField('filter-to','');
+    checkAllMethods();
+    activeFilters = { from:null, to:null, methods:["cash","zelle","card"] };
+    document.getElementById('preset-ytd').classList.remove('active');
+    document.getElementById('year-select').value = "";
+    render();
+  }
+
+  function applyPreset(kind){
+    const now = new Date();
+    const jan1 = toDateStr(new Date(now.getFullYear(), 0, 1));
+    const todayStr = toDateStr(now);
+
+    if (kind === 'ytd'){
+      setDateField('filter-from', jan1);
+      setDateField('filter-to', todayStr);
+      activeFilters = { from: jan1, to: todayStr, methods:["cash","zelle","card"] };
+      document.getElementById('preset-ytd').classList.add('active');
+      document.getElementById('year-select').value = "";
+    }
+    checkAllMethods();
+    render();
+  }
+
+  function handleYearInput(value){
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    if (!/^\d{4}$/.test(trimmed)){
+      alert("Please enter a 4-digit year, like 2026.");
+      return;
+    }
+    const year = parseInt(trimmed, 10);
+    const jan1 = `${year}-01-01`;
+    const dec31 = `${year}-12-31`;
+    setDateField('filter-from', jan1);
+    setDateField('filter-to', dec31);
+    activeFilters = { from: jan1, to: dec31, methods:["cash","zelle","card"] };
+    checkAllMethods();
+    document.getElementById('preset-ytd').classList.remove('active');
+    render();
+  }
+
+  function exportToExcel(){
+    const filtered = getFiltered();
+    if (filtered.length === 0){
+      alert("No records to export with the current filters.");
+      return;
+    }
+    const rows = filtered
+      .sort((a,b) => a.date.localeCompare(b.date))
+      .map(r => ({
+        Date: r.date,
+        Client: `${r.firstName || ""} ${r.lastName || ""}`.trim(),
+        Service: (r.services || []).join(", "),
+        Method: methodLabel(r.method),
+        Amount: r.amount
+      }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [{wch:12},{wch:20},{wch:32},{wch:10},{wch:10}];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Payments");
+    const today = toDateStr(new Date());
+    XLSX.writeFile(wb, `alexis-beauty-room-payments-${today}.xlsx`);
+  }
+
+  // ===== Charts =====
+
+  function renderQuickChart(){
+    let year = parseInt(document.getElementById('quick-chart-year').value) || new Date().getFullYear();
+    document.getElementById('quick-chart-year').value = year;
+    document.getElementById('quick-chart-year-label').textContent = year;
+    const monthly = new Array(12).fill(0);
+    records.forEach(r => {
+      const [y,m] = r.date.split('-').map(Number);
+      if (y === year) monthly[m-1] += r.amount;
+    });
+    const ctx = document.getElementById('quick-monthly-chart').getContext('2d');
+    if (quickChart) quickChart.destroy();
+    quickChart = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: MONTH_NAMES, datasets: [{ label:'Revenue', data: monthly, backgroundColor:'#AD8752' }] },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{ y:{ beginAtZero:true, ticks:{ callback:v => '$'+v } } }
+      }
+    });
+  }
+
+  function getRecordsInRange(fromId, toId){
+    const from = document.getElementById(fromId).value;
+    const to = document.getElementById(toId).value;
+    return records.filter(r => (!from || r.date >= from) && (!to || r.date <= to));
+  }
+
+  function openReports(){
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('reports-view').style.display = 'block';
+    initReportsDefaults();
+    renderAllReportCharts();
+  }
+  function closeReports(){
+    document.getElementById('reports-view').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  }
+
+  function initReportsDefaults(){
+    const currentYear = new Date().getFullYear();
+    document.getElementById('mix-year').value = currentYear;
+    document.getElementById('countrev-year').value = currentYear;
+    document.getElementById('avgtx-year').value = currentYear;
+    const jan1 = `${currentYear}-01-01`;
+    const dec31 = `${currentYear}-12-31`;
+    document.getElementById('svc-from').value = jan1;
+    document.getElementById('svc-to').value = dec31;
+    document.getElementById('topclients-from').value = jan1;
+    document.getElementById('topclients-to').value = dec31;
+    document.getElementById('dow-from').value = jan1;
+    document.getElementById('dow-to').value = dec31;
+    populateYoyYearChecks();
+  }
+
+  function renderAllReportCharts(){
+    renderYoyChart();
+    renderMixChart();
+    renderServiceChart();
+    renderCountRevChart();
+    renderTopClientsChart();
+    renderAvgTxChart();
+    renderDowChart();
+  }
+
+  function populateYoyYearChecks(){
+    const years = Array.from(new Set(records.map(r => parseInt(r.date.slice(0,4)))));
+    const currentYear = new Date().getFullYear();
+    if (!years.includes(currentYear)) years.push(currentYear);
+    years.sort();
+    const container = document.getElementById('yoy-year-checks');
+    container.innerHTML = years.map(y =>
+      `<label style="display:flex;align-items:center;gap:4px;font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);">
+        <input type="checkbox" value="${y}" checked onchange="renderYoyChart()"> ${y}
+      </label>`
+    ).join('');
+  }
+
+  function renderYoyChart(){
+    const checked = Array.from(document.querySelectorAll('#yoy-year-checks input:checked')).map(cb => parseInt(cb.value));
+    const palette = ['#AD8752','#3A5A9C','#4B6E4F','#A6493A','#8A6A3C'];
+    const datasets = checked.map((year, i) => {
+      const monthly = new Array(12).fill(0);
+      records.forEach(r => {
+        const [y,m] = r.date.split('-').map(Number);
+        if (y === year) monthly[m-1] += r.amount;
+      });
+      return { label:String(year), data:monthly, backgroundColor: palette[i % palette.length] };
+    });
+    const ctx = document.getElementById('yoy-chart').getContext('2d');
+    if (yoyChart) yoyChart.destroy();
+    yoyChart = new Chart(ctx, {
+      type:'bar',
+      data:{ labels: MONTH_NAMES, datasets },
+      options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
+    });
+  }
+
+  function renderMixChart(){
+    let year = parseInt(document.getElementById('mix-year').value) || new Date().getFullYear();
+    document.getElementById('mix-year').value = year;
+    const cash = new Array(12).fill(0), zelle = new Array(12).fill(0), card = new Array(12).fill(0);
+    records.forEach(r => {
+      const [y,m] = r.date.split('-').map(Number);
+      if (y !== year) return;
+      if (r.method === 'cash') cash[m-1] += r.amount;
+      else if (r.method === 'zelle') zelle[m-1] += r.amount;
+      else if (r.method === 'card') card[m-1] += r.amount;
+    });
+    const ctx = document.getElementById('mix-chart').getContext('2d');
+    if (mixChart) mixChart.destroy();
+    mixChart = new Chart(ctx, {
+      type:'bar',
+      data:{ labels: MONTH_NAMES, datasets:[
+        { label:'Cash', data:cash, backgroundColor:'#4B6E4F' },
+        { label:'Payment App', data:zelle, backgroundColor:'#3A5A9C' },
+        { label:'Card', data:card, backgroundColor:'#AD8752' }
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false, scales:{ x:{ stacked:true }, y:{ stacked:true, beginAtZero:true } } }
+    });
+  }
+
+  function renderServiceChart(){
+    const filtered = getRecordsInRange('svc-from','svc-to');
+    const totals = {};
+    filtered.forEach(r => {
+      const svcList = r.services || [];
+      if (svcList.length === 0) return;
+      const share = r.amount / svcList.length;
+      svcList.forEach(s => { totals[s] = (totals[s] || 0) + share; });
+    });
+    const sorted = Object.entries(totals).sort((a,b) => b[1]-a[1]);
+    const ctx = document.getElementById('service-chart').getContext('2d');
+    if (serviceChart) serviceChart.destroy();
+    serviceChart = new Chart(ctx, {
+      type:'bar',
+      data:{ labels: sorted.map(e=>e[0]), datasets:[{ label:'Revenue', data: sorted.map(e=>e[1]), backgroundColor:'#AD8752' }] },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ x:{ beginAtZero:true } } }
+    });
+  }
+
+  function renderCountRevChart(){
+    let year = parseInt(document.getElementById('countrev-year').value) || new Date().getFullYear();
+    document.getElementById('countrev-year').value = year;
+    const counts = new Array(12).fill(0), revenue = new Array(12).fill(0);
+    records.forEach(r => {
+      const [y,m] = r.date.split('-').map(Number);
+      if (y === year){ counts[m-1]++; revenue[m-1] += r.amount; }
+    });
+    const ctx = document.getElementById('countrev-chart').getContext('2d');
+    if (countRevChart) countRevChart.destroy();
+    countRevChart = new Chart(ctx, {
+      data:{ labels: MONTH_NAMES, datasets:[
+        { type:'bar', label:'Revenue ($)', data:revenue, backgroundColor:'#AD8752', yAxisID:'y' },
+        { type:'line', label:'Appointments', data:counts, borderColor:'#3A5A9C', backgroundColor:'#3A5A9C', yAxisID:'y1', tension:0.3 }
+      ]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        scales:{
+          y:{ beginAtZero:true, position:'left', title:{ display:true, text:'Revenue ($)' } },
+          y1:{ beginAtZero:true, position:'right', title:{ display:true, text:'Appointments' }, grid:{ drawOnChartArea:false } }
+        }
+      }
+    });
+  }
+
+  function renderTopClientsChart(){
+    const filtered = getRecordsInRange('topclients-from','topclients-to');
+    const totals = {};
+    filtered.forEach(r => {
+      const name = `${r.firstName||''} ${r.lastName||''}`.trim() || 'Unknown';
+      totals[name] = (totals[name] || 0) + r.amount;
+    });
+    const sorted = Object.entries(totals).sort((a,b) => b[1]-a[1]).slice(0,10);
+    const ctx = document.getElementById('topclients-chart').getContext('2d');
+    if (topClientsChart) topClientsChart.destroy();
+    topClientsChart = new Chart(ctx, {
+      type:'bar',
+      data:{ labels: sorted.map(e=>e[0]), datasets:[{ label:'Total spend', data: sorted.map(e=>e[1]), backgroundColor:'#8A6A3C' }] },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ x:{ beginAtZero:true } } }
+    });
+  }
+
+  function renderAvgTxChart(){
+    let year = parseInt(document.getElementById('avgtx-year').value) || new Date().getFullYear();
+    document.getElementById('avgtx-year').value = year;
+    const sums = new Array(12).fill(0), counts = new Array(12).fill(0);
+    records.forEach(r => {
+      const [y,m] = r.date.split('-').map(Number);
+      if (y === year){ sums[m-1] += r.amount; counts[m-1]++; }
+    });
+    const avg = sums.map((s,i) => counts[i] ? s / counts[i] : 0);
+    const ctx = document.getElementById('avgtx-chart').getContext('2d');
+    if (avgTxChart) avgTxChart.destroy();
+    avgTxChart = new Chart(ctx, {
+      type:'line',
+      data:{ labels: MONTH_NAMES, datasets:[{ label:'Avg transaction', data:avg, borderColor:'#AD8752', backgroundColor:'rgba(173,135,82,0.15)', fill:true, tension:0.3 }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+    });
+  }
+
+  function renderDowChart(){
+    const filtered = getRecordsInRange('dow-from','dow-to');
+    const totals = new Array(7).fill(0);
+    filtered.forEach(r => {
+      const d = new Date(r.date + 'T00:00:00');
+      totals[d.getDay()] += r.amount;
+    });
+    const ctx = document.getElementById('dow-chart').getContext('2d');
+    if (dowChart) dowChart.destroy();
+    dowChart = new Chart(ctx, {
+      type:'bar',
+      data:{ labels: DOW_NAMES, datasets:[{ label:'Revenue', data: totals, backgroundColor:'#AD8752' }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+    });
+  }
+</script>
+
+</body>
+</html>
